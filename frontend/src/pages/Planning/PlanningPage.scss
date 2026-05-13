@@ -1,0 +1,457 @@
+@use '../../styles/variables' as *;
+
+// ==============================
+// Planning Page Styles
+// ==============================
+
+.planning-page {
+  max-width: 1200px;
+  margin: 0 auto;
+
+  &__title {
+    font-size: 24px;
+    font-weight: 700;
+    color: $text-primary;
+    margin-bottom: 4px;
+  }
+
+  &__subtitle {
+    font-size: 14px;
+    color: $text-secondary;
+    margin-bottom: $spacing-lg;
+  }
+
+  &__body {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: $spacing-lg;
+    align-items: start;
+  }
+
+  &__main {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+  }
+}
+
+// ---- Goal Type Section ----
+.goal-type {
+  background: $bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-sm;
+
+  &__title {
+    font-size: 15px;
+    font-weight: 600;
+    color: $text-primary;
+    margin-bottom: $spacing-md;
+  }
+
+  &__grid {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 20px;
+    border: 2px solid $border-color;
+    border-radius: $radius-md;
+    background: $bg-card;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 90px;
+
+    &:hover {
+      border-color: $primary-blue;
+    }
+
+    &--active {
+      border-color: $primary-blue;
+      background: $primary-blue-light;
+    }
+
+    &-icon {
+      font-size: 28px;
+    }
+
+    &-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: $text-secondary;
+    }
+  }
+}
+
+// ---- Plan Form Section ----
+.plan-form {
+  background: $bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-sm;
+
+  &__title {
+    font-size: 15px;
+    font-weight: 600;
+    color: $text-primary;
+    margin-bottom: $spacing-lg;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-md;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    &--full {
+      grid-column: 1 / -1;
+    }
+  }
+
+  &__label {
+    font-size: 13px;
+    font-weight: 500;
+    color: $text-secondary;
+  }
+
+  &__input {
+    height: 42px;
+    padding: 0 14px;
+    border: 1px solid $border-color;
+    border-radius: $radius-md;
+    font-size: 14px;
+    color: $text-primary;
+    outline: none;
+    transition: border-color 0.2s;
+
+    &:focus {
+      border-color: $primary-blue;
+      box-shadow: 0 0 0 3px rgba($primary-blue, 0.1);
+    }
+
+    &::placeholder {
+      color: $text-muted;
+    }
+  }
+
+  &__radio-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 4px;
+  }
+
+  &__radio {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    padding: 14px 16px;
+    border: 2px solid $border-color;
+    border-radius: $radius-md;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &--active {
+      border-color: $primary-blue;
+      background: $primary-blue-light;
+    }
+
+    input {
+      accent-color: $primary-blue;
+    }
+
+    &-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: $text-primary;
+    }
+  }
+
+  &__terms {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 4px;
+  }
+
+  &__term-chip {
+    padding: 8px 20px;
+    border: 1px solid $border-color;
+    border-radius: $radius-full;
+    font-size: 13px;
+    font-weight: 500;
+    color: $text-secondary;
+    background: $bg-card;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &--active {
+      background: $primary-blue;
+      border-color: $primary-blue;
+      color: #fff;
+    }
+
+    &:hover:not(&--active) {
+      border-color: $primary-blue;
+      color: $primary-blue;
+    }
+  }
+
+  &__date {
+    font-size: 13px;
+    color: $text-muted;
+    margin-left: auto;
+  }
+}
+
+// ---- Bank Selection Section ----
+.bank-selection {
+  background: $bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-sm;
+
+  &__title {
+    font-size: 15px;
+    font-weight: 600;
+    color: $text-primary;
+    margin-bottom: 4px;
+  }
+
+  &__desc {
+    font-size: 13px;
+    color: $text-muted;
+    margin-bottom: $spacing-md;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+// ---- Plan Summary Aside ----
+.plan-summary {
+  background: $bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-sm;
+  position: sticky;
+  top: 88px;
+
+  &__avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, $accent-orange, darken($accent-orange, 10%));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 auto $spacing-md;
+  }
+
+  &__name {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: $text-primary;
+    margin-bottom: $spacing-xs;
+  }
+
+  &__goal {
+    text-align: center;
+    font-size: 13px;
+    color: $text-muted;
+    margin-bottom: $spacing-lg;
+  }
+
+  &__divider {
+    height: 1px;
+    background: $border-color;
+    margin: $spacing-md 0;
+  }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+
+    &-label {
+      font-size: 13px;
+      color: $text-secondary;
+    }
+
+    &-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: $text-primary;
+
+      &--highlight {
+        color: $primary-blue;
+      }
+
+      &--green {
+        color: $accent-green;
+      }
+    }
+  }
+
+  &__total {
+    text-align: center;
+    padding: $spacing-md;
+    background: $primary-blue-light;
+    border-radius: $radius-md;
+    margin-top: $spacing-md;
+
+    &-label {
+      font-size: 12px;
+      color: $text-secondary;
+      margin-bottom: 4px;
+    }
+
+    &-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: $primary-blue;
+    }
+  }
+}
+
+// ---- Plan Results Section ----
+.plan-results {
+  background: $bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-sm;
+  margin-top: $spacing-lg;
+  grid-column: 1 / -1;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-md;
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 700;
+    color: $text-primary;
+  }
+
+  &__badge {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: $radius-full;
+    background: $primary-blue-light;
+    color: $primary-blue;
+    font-weight: 600;
+  }
+
+  &__card {
+    border: 1px solid $border-color;
+    border-radius: $radius-md;
+    padding: $spacing-md;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: border-color 0.2s;
+
+    &:hover {
+      border-color: $primary-blue;
+    }
+
+    &--best {
+      border-color: $accent-green;
+      background: $accent-green-light;
+    }
+  }
+
+  &__card-bank {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__card-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: $radius-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  &__card-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-primary;
+  }
+
+  &__card-rate {
+    font-size: 13px;
+    color: $text-secondary;
+  }
+
+  &__card-stats {
+    display: flex;
+    gap: $spacing-xl;
+    text-align: right;
+  }
+
+  &__card-stat {
+    &-label {
+      font-size: 12px;
+      color: $text-muted;
+    }
+
+    &-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: $text-primary;
+
+      &--green {
+        color: $accent-green;
+      }
+    }
+  }
+}
+
+// ---- Submit Button ----
+.planning-submit {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: $radius-md;
+  background: $primary-blue;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: $spacing-md;
+
+  &:hover {
+    background: $primary-blue-hover;
+  }
+}
