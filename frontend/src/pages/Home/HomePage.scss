@@ -1,0 +1,295 @@
+@use '../../styles/variables' as *;
+
+// ==============================
+// HomePage Styles
+// ==============================
+
+.home-page {
+  max-width: 1200px;
+  margin: 0 auto;
+
+  &__title {
+    font-size: 24px;
+    font-weight: 700;
+    color: $text-primary;
+    margin-bottom: 4px;
+  }
+
+  &__subtitle {
+    font-size: 14px;
+    color: $text-secondary;
+    margin-bottom: $spacing-lg;
+  }
+}
+
+// ---- Bank Info Section ----
+.bank-info {
+  background: $bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  box-shadow: $shadow-sm;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-md;
+  }
+
+  &__bank {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  &__logo {
+    width: 48px;
+    height: 48px;
+    border-radius: $radius-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+    color: #fff;
+  }
+
+  &__name {
+    h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: $text-primary;
+      margin: 0 0 2px;
+    }
+
+    span {
+      font-size: 13px;
+      color: $text-muted;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__btn {
+    padding: 8px 16px;
+    border-radius: $radius-md;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid $border-color;
+    background: $bg-card;
+    color: $text-secondary;
+    transition: all 0.2s;
+
+    &:hover {
+      border-color: $primary-blue;
+      color: $primary-blue;
+    }
+
+    &--primary {
+      background: $primary-blue;
+      border-color: $primary-blue;
+      color: #fff;
+
+      &:hover {
+        background: $primary-blue-hover;
+      }
+    }
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+// ---- Interest Rate Table ----
+.rate-table {
+  background: $bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  box-shadow: $shadow-sm;
+
+  &__title {
+    font-size: 16px;
+    font-weight: 700;
+    color: $text-primary;
+    margin-bottom: $spacing-md;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: $radius-full;
+    background: $accent-green-light;
+    color: $accent-green;
+    font-weight: 600;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th {
+    text-align: center;
+    padding: 12px 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-secondary;
+    background: $bg-muted;
+    border-bottom: 1px solid $border-color;
+
+    &:first-child {
+      text-align: left;
+      padding-left: 16px;
+      border-radius: $radius-sm 0 0 0;
+    }
+
+    &:last-child {
+      border-radius: 0 $radius-sm 0 0;
+    }
+  }
+
+  td {
+    text-align: center;
+    padding: 14px 8px;
+    font-size: 14px;
+    color: $text-primary;
+    border-bottom: 1px solid $border-light;
+
+    &:first-child {
+      text-align: left;
+      padding-left: 16px;
+      font-weight: 500;
+      color: $text-secondary;
+    }
+  }
+
+  &__rate {
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  &__change {
+    font-size: 12px;
+    font-weight: 600;
+
+    &--up {
+      color: $accent-green;
+    }
+
+    &--down {
+      color: $accent-red;
+    }
+
+    &--neutral {
+      color: $text-muted;
+    }
+  }
+}
+
+// ---- Interest History Section ----
+.rate-history {
+  background: $bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  box-shadow: $shadow-sm;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-lg;
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 700;
+    color: $text-primary;
+  }
+
+  &__tabs {
+    display: flex;
+    gap: 4px;
+    background: $bg-muted;
+    border-radius: $radius-md;
+    padding: 3px;
+  }
+
+  &__tab {
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    background: none;
+    border-radius: $radius-sm;
+    color: $text-muted;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &--active {
+      background: $bg-card;
+      color: $primary-blue;
+      box-shadow: $shadow-sm;
+    }
+
+    &:hover:not(&--active) {
+      color: $text-secondary;
+    }
+  }
+
+  &__chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    height: 200px;
+    padding: $spacing-md 0;
+    border-bottom: 1px solid $border-light;
+  }
+
+  &__bar-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+    justify-content: flex-end;
+  }
+
+  &__bar {
+    width: 32px;
+    border-radius: 4px 4px 0 0;
+    background: $primary-blue;
+    transition: height 0.3s ease;
+    min-height: 4px;
+    position: relative;
+
+    &:hover {
+      opacity: 0.85;
+    }
+  }
+
+  &__bar-label {
+    font-size: 11px;
+    color: $text-muted;
+    font-weight: 500;
+  }
+
+  &__bar-value {
+    font-size: 11px;
+    color: $text-primary;
+    font-weight: 600;
+  }
+}
