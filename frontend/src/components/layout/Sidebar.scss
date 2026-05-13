@@ -1,0 +1,109 @@
+@use '../../styles/variables' as *;
+
+.sidebar {
+  width: $sidebar-width;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: $sidebar-bg;
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+
+  &__logo {
+    height: $header-height;
+    display: flex;
+    align-items: center;
+    padding: 0 $spacing-lg;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+    &-icon {
+      width: 36px;
+      height: 36px;
+      background: $primary-blue;
+      border-radius: $radius-md;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
+      margin-right: $spacing-sm;
+    }
+
+    &-text {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.3px;
+    }
+  }
+
+  &__nav {
+    flex: 1;
+    padding: $spacing-md $spacing-sm;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow-y: auto;
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border-radius: $radius-md;
+    color: $sidebar-text;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    &--active {
+      color: $sidebar-text-active;
+      background: $sidebar-active-bg;
+
+      .sidebar__link-icon {
+        color: $primary-blue;
+      }
+    }
+
+    &-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+  }
+
+  &__bottom {
+    padding: $spacing-md;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  &__logout {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 10px 16px;
+    border: none;
+    background: none;
+    border-radius: $radius-md;
+    color: $sidebar-text;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: $accent-red;
+      background: rgba($accent-red, 0.1);
+    }
+  }
+}
