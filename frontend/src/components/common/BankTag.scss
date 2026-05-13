@@ -1,0 +1,51 @@
+@use '../../styles/variables' as *;
+
+.bank-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: $radius-full;
+  border: 1px solid $border-color;
+  background: $bg-card;
+  font-size: 13px;
+  font-weight: 500;
+  color: $text-secondary;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: $primary-blue;
+    color: $primary-blue;
+  }
+
+  &--active {
+    background: $primary-blue;
+    border-color: $primary-blue;
+    color: #fff;
+
+    &:hover {
+      background: $primary-blue-hover;
+      color: #fff;
+    }
+  }
+
+  &__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  &--more {
+    background: $bg-muted;
+    color: $text-muted;
+    border-style: dashed;
+
+    &:hover {
+      color: $primary-blue;
+      border-color: $primary-blue;
+    }
+  }
+}
