@@ -1,110 +1,97 @@
 @use '../../styles/variables' as *;
 
-// ==============================
-// Management Page Styles
-// ==============================
-
 .management-page {
   max-width: 1200px;
   margin: 0 auto;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: $spacing-lg;
+  }
 
   &__title {
     font-size: 24px;
     font-weight: 700;
     color: $text-primary;
-    margin-bottom: 4px;
+    margin: 0 0 4px;
   }
 
   &__subtitle {
     font-size: 14px;
     color: $text-secondary;
-    margin-bottom: $spacing-lg;
+    margin: 0;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  &__btn {
+    padding: 10px 18px;
+    border-radius: $radius-md;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &--outline {
+      border: 1px solid $border-color;
+      background: $bg-card;
+      color: $text-secondary;
+
+      &:hover {
+        border-color: $primary-blue;
+        color: $primary-blue;
+      }
+    }
+
+    &--primary {
+      border: none;
+      background: $primary-blue;
+      color: #fff;
+
+      &:hover {
+        background: $primary-blue-hover;
+      }
+    }
   }
 
   &__grid {
     display: grid;
-    grid-template-columns: 1fr 380px;
+    grid-template-columns: 1fr 340px;
     gap: $spacing-lg;
-    align-items: start;
-  }
-}
-
-// ---- Stat Cards ----
-.stat-cards {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: $spacing-md;
-  margin-bottom: $spacing-lg;
-
-  &__card {
-    background: $bg-card;
-    border-radius: $radius-lg;
-    padding: 20px;
-    box-shadow: $shadow-sm;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-
-    &-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: $radius-md;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-    }
-
-    &-label {
-      font-size: 13px;
-      color: $text-secondary;
-    }
-
-    &-value {
-      font-size: 22px;
-      font-weight: 800;
-      color: $text-primary;
-    }
-
-    &-change {
-      font-size: 12px;
-      font-weight: 600;
-
-      &--up {
-        color: $accent-green;
-      }
-    }
+    margin-top: $spacing-lg;
   }
 }
 
 // ---- Alert Banner ----
 .alert-banner {
-  background: $accent-orange-light;
-  border: 1px solid rgba($accent-orange, 0.2);
-  border-radius: $radius-lg;
-  padding: 16px 20px;
-  margin-bottom: $spacing-lg;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-
-  &__content {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+  gap: 14px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #FFF4ED, #FFEDD5);
+  border: 1px solid #FED7AA;
+  border-radius: $radius-lg;
+  margin-bottom: $spacing-lg;
 
   &__icon {
     width: 36px;
     height: 36px;
-    border-radius: 50%;
     background: $accent-orange;
-    color: #fff;
+    border-radius: $radius-md;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    color: #fff;
     flex-shrink: 0;
+  }
+
+  &__content {
+    flex: 1;
   }
 
   &__text {
@@ -112,78 +99,93 @@
     color: $text-primary;
 
     strong {
-      font-weight: 700;
-    }
-
-    span {
-      color: $text-secondary;
+      color: $accent-orange;
     }
   }
 
-  &__action {
+  &__meta {
+    font-size: 12px;
+    color: $text-muted;
+    display: block;
+    margin-top: 2px;
+  }
+
+  &__cta {
     padding: 8px 16px;
-    border: 1px solid $accent-orange;
+    border: none;
     border-radius: $radius-md;
-    background: none;
-    color: $accent-orange;
-    font-size: 13px;
+    background: $accent-orange;
+    color: #fff;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
+    transition: background 0.2s;
 
     &:hover {
-      background: $accent-orange;
-      color: #fff;
+      background: darken(#FF6B35, 8%);
     }
   }
 }
 
-// ---- Savings List ----
-.savings-list {
-  background: $bg-card;
-  border-radius: $radius-lg;
-  padding: $spacing-lg;
-  box-shadow: $shadow-sm;
+// ---- Stat Cards Grid ----
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: $spacing-lg;
+}
 
+// ---- Plan List ----
+.plan-list {
   &__title {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
     color: $text-primary;
+    margin-bottom: 6px;
+  }
+
+  &__badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: $radius-full;
+    background: $primary-blue-light;
+    color: $primary-blue;
+    font-weight: 600;
     margin-bottom: $spacing-md;
   }
 
-  &__item {
+  &__card {
+    background: $bg-card;
     border: 1px solid $border-color;
-    border-radius: $radius-md;
-    padding: $spacing-md;
-    margin-bottom: 12px;
-    transition: border-color 0.2s;
+    border-radius: $radius-lg;
+    padding: $spacing-lg;
+    margin-bottom: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
 
     &:hover {
       border-color: $primary-blue;
-    }
-
-    &:last-child {
-      margin-bottom: 0;
+      box-shadow: $shadow-md;
     }
   }
 
-  &__item-header {
+  &__card-header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: flex-start;
     margin-bottom: 12px;
   }
 
-  &__item-bank {
+  &__card-left {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
   }
 
-  &__item-logo {
-    width: 36px;
-    height: 36px;
+  &__card-logo {
+    width: 40px;
+    height: 40px;
     border-radius: $radius-sm;
     display: flex;
     align-items: center;
@@ -191,70 +193,135 @@
     font-size: 11px;
     font-weight: 700;
     color: #fff;
+    flex-shrink: 0;
   }
 
-  &__item-name {
-    font-size: 14px;
-    font-weight: 600;
+  &__card-name {
+    font-size: 15px;
+    font-weight: 700;
     color: $text-primary;
   }
 
-  &__item-plan {
+  &__card-meta {
     font-size: 12px;
     color: $text-muted;
+    margin-top: 2px;
   }
 
-  &__item-rate {
-    font-size: 14px;
-    font-weight: 700;
-    color: $primary-blue;
-  }
-
-  &__progress {
-    height: 8px;
-    background: $border-light;
-    border-radius: 99px;
-    overflow: hidden;
-    margin-bottom: 10px;
-
-    &-fill {
-      height: 100%;
-      border-radius: 99px;
-      background: $primary-blue;
-      transition: width 0.3s ease;
-    }
-  }
-
-  &__item-footer {
+  &__card-badges {
     display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: $text-muted;
-
-    span {
-      &:last-child {
-        font-weight: 600;
-        color: $text-secondary;
-      }
-    }
+    gap: 6px;
   }
 
-  &__item-status {
-    display: inline-block;
+  &__card-badge {
     font-size: 11px;
-    padding: 2px 8px;
+    padding: 3px 10px;
     border-radius: $radius-full;
     font-weight: 600;
-    margin-left: 8px;
 
-    &--active {
+    &--best {
       background: $accent-green-light;
       color: $accent-green;
     }
 
-    &--near {
+    &--active {
+      background: $primary-blue-light;
+      color: $primary-blue;
+    }
+
+    &--info {
       background: $accent-orange-light;
       color: $accent-orange;
+    }
+  }
+
+  &__card-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  &__card-banks {
+    font-size: 13px;
+    color: $text-secondary;
+  }
+
+  &__card-bank-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__card-change {
+    color: $accent-green;
+    font-weight: 600;
+  }
+
+  &__card-rate {
+    text-align: right;
+  }
+
+  &__card-rate-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: $primary-blue;
+  }
+
+  &__card-rate-label {
+    font-size: 12px;
+    color: $text-muted;
+  }
+
+  &__card-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-top: 1px solid $border-light;
+    font-size: 13px;
+    color: $text-muted;
+    margin-bottom: 12px;
+
+    &-value {
+      font-weight: 700;
+      color: $text-primary;
+    }
+  }
+
+  &__card-actions {
+    display: flex;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid $border-light;
+  }
+
+  &__card-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: $radius-md;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+
+    &--outline {
+      border: 1px solid $border-color;
+      background: $bg-card;
+      color: $text-secondary;
+
+      &:hover {
+        border-color: $primary-blue;
+        color: $primary-blue;
+      }
+    }
+
+    &--primary {
+      border: none;
+      background: $primary-blue;
+      color: #fff;
+
+      &:hover {
+        background: $primary-blue-hover;
+      }
     }
   }
 }
@@ -264,13 +331,18 @@
   background: $bg-card;
   border-radius: $radius-lg;
   padding: $spacing-lg;
-  box-shadow: $shadow-sm;
+  box-shadow: $shadow-card;
+  position: sticky;
+  top: 88px;
 
   &__title {
     font-size: 16px;
     font-weight: 700;
     color: $text-primary;
-    margin-bottom: $spacing-lg;
+    margin-bottom: $spacing-md;
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
 
   &__donut {
@@ -282,28 +354,27 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
+    &::before {
+      content: "";
+      position: absolute;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: $bg-card;
+    }
   }
 
   &__donut-center {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: $bg-card;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
+    position: relative;
+    z-index: 1;
+    text-align: center;
 
     &-value {
-      font-size: 18px;
+      font-size: 26px;
       font-weight: 800;
       color: $text-primary;
-    }
-
-    &-label {
-      font-size: 11px;
-      color: $text-muted;
+      display: block;
     }
   }
 
@@ -316,108 +387,21 @@
   &__legend-item {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-
-    &-left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    gap: 10px;
+    font-size: 13px;
+    color: $text-secondary;
   }
 
   &__legend-dot {
     width: 10px;
     height: 10px;
     border-radius: 50%;
+    flex-shrink: 0;
   }
 
-  &__legend-name {
-    font-size: 13px;
-    color: $text-secondary;
-  }
-
-  &__legend-value {
-    font-size: 13px;
+  &__legend-pct {
+    margin-left: auto;
     font-weight: 600;
     color: $text-primary;
-  }
-}
-
-// ---- Recent Activity ----
-.recent-activity {
-  background: $bg-card;
-  border-radius: $radius-lg;
-  padding: $spacing-lg;
-  box-shadow: $shadow-sm;
-  margin-top: $spacing-lg;
-
-  &__title {
-    font-size: 16px;
-    font-weight: 700;
-    color: $text-primary;
-    margin-bottom: $spacing-md;
-  }
-
-  &__list {
-    display: flex;
-    flex-direction: column;
-  }
-
-  &__item {
-    display: flex;
-    gap: 12px;
-    padding: 12px 0;
-    border-bottom: 1px solid $border-light;
-
-    &:last-child {
-      border-bottom: none;
-    }
-  }
-
-  &__item-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    flex-shrink: 0;
-
-    &--deposit {
-      background: $primary-blue-light;
-      color: $primary-blue;
-    }
-
-    &--interest {
-      background: $accent-green-light;
-      color: $accent-green;
-    }
-
-    &--create {
-      background: rgba($accent-orange, 0.1);
-      color: $accent-orange;
-    }
-
-    &--maturity {
-      background: $accent-red-light;
-      color: $accent-red;
-    }
-  }
-
-  &__item-content {
-    flex: 1;
-  }
-
-  &__item-text {
-    font-size: 13px;
-    color: $text-primary;
-    line-height: 1.4;
-  }
-
-  &__item-date {
-    font-size: 12px;
-    color: $text-muted;
-    margin-top: 2px;
   }
 }

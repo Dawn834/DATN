@@ -255,6 +255,92 @@ export const RECENT_ACTIVITIES = [
   { id: 5, type: "maturity", description: "Kế hoạch \"Quỹ dự phòng\" đã đáo hạn", date: "25/04/2026", bankCode: "VPB" },
 ]
 
+// ---- Thống kê trang Quản lý (theo Figma) ----
+export const MANAGEMENT_STATS = [
+  {
+    icon: "💰",
+    iconBg: "#EDF2FF",
+    label: "Tổng tiền gửi",
+    value: "997 tr",
+    change: "▲ 8.2% 3 kế hoạch · MBBank & TCB",
+    changeType: "up",
+  },
+  {
+    icon: "📈",
+    iconBg: "#F0FDF4",
+    label: "Lãi ước tính",
+    value: "82 tr",
+    change: "▲ 12.4% Tổng đề MB lãi 8.50%",
+    changeType: "up",
+  },
+  {
+    icon: "📊",
+    iconBg: "#FFF7ED",
+    label: "Tổng tài sản",
+    value: "997tr",
+    change: "",
+    changeType: "up",
+  },
+]
+
+// ---- Danh sách kế hoạch cho trang Quản lý (theo Figma) ----
+export const SAVINGS_PLANS = [
+  {
+    id: 1,
+    planName: "Mua căn hộ 2026",
+    bankCode: "MB",
+    bankName: "MB Bank",
+    initialDeposit: 100000000,
+    monthlyDeposit: 30000000,
+    targetAmount: 800000000,
+    totalAmount: 808947390,
+    rate: 8.5,
+    term: 12,
+    startDate: "08/05/2025",
+    endDate: "08/05/2026",
+    progress: 95,
+    currentAmount: 190054040,
+    status: "active",
+    badge: "Tốt nhất",
+  },
+  {
+    id: 2,
+    planName: "Mua xe SH",
+    bankCode: "MB",
+    bankName: "MB Bank",
+    initialDeposit: 100000000,
+    monthlyDeposit: 30000000,
+    targetAmount: 200000000,
+    totalAmount: 808947390,
+    rate: 8.2,
+    term: 12,
+    startDate: "08/05/2025",
+    endDate: "08/05/2026",
+    progress: 75,
+    currentAmount: 150000000,
+    status: "active",
+    badge: "Đang chạy",
+  },
+  {
+    id: 3,
+    planName: "Du lịch Châu Âu",
+    bankCode: "TCB",
+    bankName: "Techcom Bank",
+    initialDeposit: 800000000,
+    monthlyDeposit: 0,
+    targetAmount: 860000000,
+    totalAmount: 808947390,
+    rate: 7.68,
+    term: 12,
+    startDate: "01/05/2025",
+    endDate: "01/05/2026",
+    progress: 60,
+    currentAmount: 52880000,
+    status: "active",
+    badge: null,
+  },
+]
+
 // ---- Hàm tiện ích format tiền ----
 export function formatCurrency(amount) {
   return new Intl.NumberFormat("vi-VN").format(amount) + " đ"

@@ -1,18 +1,22 @@
-import { FINANCIAL_STATS } from "@/data/mockData"
+import { AlertTriangle } from "lucide-react"
 
 export function AlertBannerSection() {
-  if (FINANCIAL_STATS.nearMaturityCount === 0) return null
-
   return (
     <section className="alert-banner">
-      <div className="alert-banner__content">
-        <div className="alert-banner__icon">⚠</div>
-        <div className="alert-banner__text">
-          <strong>Bạn có {FINANCIAL_STATS.nearMaturityCount} khoản sắp đáo hạn </strong>
-          <span>trong 30 ngày tới. Hãy xem xét tái tục hoặc rút tiền.</span>
-        </div>
+      <div className="alert-banner__icon">
+        <AlertTriangle size={18} />
       </div>
-      <button className="alert-banner__action">Xem chi tiết</button>
+      <div className="alert-banner__content">
+        <span className="alert-banner__text">
+          &quot;Mua căn hộ 2026&quot; sắp đáo hạn trong <strong>5 ngày</strong>
+        </span>
+        <span className="alert-banner__meta">
+          MBBank · 12 tháng Online · 720,000,000 đ · Đáo hạn 15/05/2025
+        </span>
+      </div>
+      <button className="alert-banner__cta">
+        ⚡ Lên kế hoạch mới ngay
+      </button>
     </section>
   )
 }

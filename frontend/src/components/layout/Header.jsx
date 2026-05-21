@@ -9,7 +9,7 @@ export function Header() {
         <input
           type="text"
           className="header__search-input"
-          placeholder="Tìm kiếm ngân hàng, khoản gửi..."
+          placeholder="Tìm ngân hàng..."
         />
       </div>
 
@@ -20,11 +20,10 @@ export function Header() {
         </button>
 
         <div className="header__user">
-          <div className="header__user-info">
-            <div className="header__user-name">Nguyễn Văn A</div>
-            <div className="header__user-role">Premium Member</div>
-          </div>
           <div className="header__user-avatar">N</div>
+          <div className="header__user-info">
+            <div className="header__user-name">Nguyễn Khoa</div>
+          </div>
         </div>
       </div>
     </header>

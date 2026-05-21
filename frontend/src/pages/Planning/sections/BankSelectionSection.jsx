@@ -1,30 +1,39 @@
 import { useState } from "react"
+import { StepHeader } from "@/components/common/StepHeader"
 import { BANKS } from "@/data/mockData"
-import { BankTag, BankTagMore } from "@/components/common/BankTag"
 import { BankSelectorPopup } from "@/components/common/BankSelectorPopup"
 
 export function BankSelectionSection({ selectedBanks, onToggleBank }) {
   const [popupOpen, setPopupOpen] = useState(false)
-  const visibleBanks = BANKS.slice(0, 6)
+  const visibleBanks = BANKS.slice(0, 8)
 
   return (
     <section className="bank-selection">
-      <h3 className="bank-selection__title">Ngân hàng</h3>
-      <p className="bank-selection__desc">Chọn ngân hàng bạn đang dùng</p>
-      <div className="bank-selection__tags">
-        {visibleBanks.map((bank) => (
-          <BankTag
-            key={bank.code}
-            bank={bank}
-            isActive={selectedBanks.includes(bank.code)}
-            onClick={() => onToggleBank(bank.code)}
-          />
-        ))}
-        <BankTagMore
-          count={BANKS.length - visibleBanks.length}
-          onClick={() => setPopupOpen(true)}
-        />
+      <StepHeader
+        step={3}
+        title="Ngân hàng ưu tiên"
+        subtitle="Sổ chọn tốt có + tự động tìm tốt nhất"
+      />
+      <div className="bank-selection__grid">
+        {visibleBanks.map((bank) => {
+          const isSelected = selectedBanks.includes(bank.code)
+          return (
+            <label key={bank.code} className={`bank-selection__item ${isSelected ? "bank-selection__item--selected" : ""}`}>
+              <input
+                type="checkbox"
+                checked={isSelected}
+                onChange={() => onToggleBank(bank.code)}
+                className="bank-selection__checkbox"
+              />
+              <span className="bank-selection__dot" style={{ background: bank.color }} />
+              <span className="bank-selection__name">{bank.name}</span>
+            </label>
+          )
+        })}
       </div>
+      <button className="bank-selection__more" onClick={() => setPopupOpen(true)}>
+        Tự động tối ưu
+      </button>
 
       <BankSelectorPopup
         isOpen={popupOpen}

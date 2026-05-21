@@ -1,0 +1,218 @@
+@use '../../styles/variables' as *;
+
+.plan-card {
+  background: $bg-card;
+  border: 1px solid $border-color;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    border-color: $primary-blue;
+    box-shadow: $shadow-md;
+  }
+
+  &--best {
+    border-color: $accent-green;
+    background: linear-gradient(135deg, rgba($accent-green, 0.03), rgba($accent-green, 0.01));
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  &__bank {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__bank-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: $radius-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  &__bank-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: $text-primary;
+  }
+
+  &__bank-meta {
+    font-size: 12px;
+    color: $text-muted;
+    margin-top: 2px;
+  }
+
+  &__badges {
+    display: flex;
+    gap: 6px;
+  }
+
+  &__badge {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: $radius-full;
+    font-weight: 600;
+
+    &--best {
+      background: $accent-green-light;
+      color: $accent-green;
+    }
+
+    &--active {
+      background: $primary-blue-light;
+      color: $primary-blue;
+    }
+
+    &--info {
+      background: $accent-orange-light;
+      color: $accent-orange;
+    }
+  }
+
+  &__details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  &__detail-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: $text-secondary;
+
+    &-icon {
+      font-size: 16px;
+    }
+
+    &-amount {
+      font-weight: 600;
+      color: $text-primary;
+    }
+
+    &-change {
+      color: $accent-green;
+      font-weight: 600;
+    }
+  }
+
+  &__rate {
+    text-align: right;
+
+    &-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: $primary-blue;
+    }
+
+    &-label {
+      font-size: 12px;
+      color: $text-muted;
+      margin-left: 2px;
+    }
+  }
+
+  &__total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-top: 1px solid $border-light;
+    margin-bottom: 12px;
+
+    &-label {
+      font-size: 13px;
+      color: $text-muted;
+    }
+
+    &-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: $text-primary;
+    }
+  }
+
+  &__progress-section {
+    margin-bottom: 14px;
+  }
+
+  &__progress {
+    height: 8px;
+    background: $border-light;
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 8px;
+
+    &-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.4s ease;
+    }
+  }
+
+  &__progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: $text-muted;
+  }
+
+  &__progress-pct {
+    font-weight: 700;
+    color: $text-secondary;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid $border-light;
+  }
+
+  &__btn {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: $radius-md;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &--outline {
+      border: 1px solid $border-color;
+      background: $bg-card;
+      color: $text-secondary;
+
+      &:hover {
+        border-color: $primary-blue;
+        color: $primary-blue;
+      }
+    }
+
+    &--primary {
+      border: none;
+      background: $primary-blue;
+      color: #fff;
+
+      &:hover {
+        background: $primary-blue-hover;
+      }
+    }
+  }
+}

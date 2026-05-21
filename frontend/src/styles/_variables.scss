@@ -1,24 +1,31 @@
 // ============================================
-// Color Palette - Based on Figma Design
+// Color Palette - Updated from Figma Page 2
 // ============================================
 
 // Sidebar
-$sidebar-bg: #0F1D40;
+$sidebar-bg: #1E2A5E;
 $sidebar-active-bg: rgba(59, 130, 246, 0.15);
-$sidebar-text: rgba(255, 255, 255, 0.6);
+$sidebar-active-border: #3B5BDB;
+$sidebar-text: rgba(255, 255, 255, 0.55);
 $sidebar-text-active: #ffffff;
 $sidebar-width: 260px;
 
 // Primary / Accents
-$primary-blue: #1A73E8;
-$primary-blue-light: #E8F0FE;
-$primary-blue-hover: #1565C0;
-$accent-orange: #F97316;
-$accent-orange-light: #FFF7ED;
+$primary-blue: #3B5BDB;
+$primary-blue-light: #EDF2FF;
+$primary-blue-hover: #364FC7;
+$accent-orange: #FF6B35;
+$accent-orange-light: #FFF4ED;
 $accent-green: #22C55E;
 $accent-green-light: #F0FDF4;
 $accent-red: #EF4444;
 $accent-red-light: #FEF2F2;
+$accent-purple: #7C3AED;
+
+// Gradients
+$gradient-primary: linear-gradient(135deg, #3B5BDB, #5B8DEF);
+$gradient-cta: linear-gradient(135deg, #3B5BDB 0%, #5B8DEF 100%);
+$gradient-orange: linear-gradient(135deg, #FF6B35, #FF9F1C);
 
 // Background & Surface
 $bg-page: #F0F2F5;
@@ -29,6 +36,7 @@ $bg-muted: #F8FAFC;
 $text-primary: #1E293B;
 $text-secondary: #64748B;
 $text-muted: #94A3B8;
+$text-white: #FFFFFF;
 
 // Border
 $border-color: #E2E8F0;
@@ -41,6 +49,7 @@ $header-height: 64px;
 $shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
 $shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
 $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+$shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
 
 // Border Radius
 $radius-sm: 6px;

@@ -1,0 +1,302 @@
+@use '../../styles/variables' as *;
+
+.plan-detail {
+  max-width: 1200px;
+  margin: 0 auto;
+
+  &__breadcrumb {
+    font-size: 13px;
+    color: $text-muted;
+    margin-bottom: $spacing-md;
+
+    a {
+      color: $primary-blue;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: $spacing-lg;
+  }
+
+  &__title {
+    font-size: 24px;
+    font-weight: 700;
+    color: $text-primary;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__badge {
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: $radius-full;
+    font-weight: 600;
+
+    &--active {
+      background: $accent-green-light;
+      color: $accent-green;
+    }
+  }
+
+  &__header-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  &__btn {
+    padding: 10px 18px;
+    border-radius: $radius-md;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &--outline {
+      border: 1px solid $border-color;
+      background: $bg-card;
+      color: $text-secondary;
+
+      &:hover {
+        border-color: $primary-blue;
+        color: $primary-blue;
+      }
+    }
+
+    &--primary {
+      border: none;
+      background: $accent-orange;
+      color: #fff;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: $spacing-lg;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: $spacing-lg;
+  }
+
+  // Table Section
+  &__table-section {
+    background: $bg-card;
+    border-radius: $radius-lg;
+    padding: $spacing-lg;
+    box-shadow: $shadow-card;
+  }
+
+  &__table-header {
+    display: flex;
+    gap: $spacing-xl;
+    align-items: center;
+    padding-bottom: $spacing-lg;
+    border-bottom: 1px solid $border-light;
+    margin-bottom: $spacing-lg;
+    flex-wrap: wrap;
+  }
+
+  &__table-bank {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 200px;
+  }
+
+  &__table-bank-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: $radius-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  &__table-bank-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: $text-primary;
+  }
+
+  &__table-bank-meta {
+    font-size: 12px;
+    color: $text-muted;
+  }
+
+  &__table-info-label {
+    font-size: 12px;
+    color: $text-muted;
+  }
+
+  &__table-info-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-primary;
+
+    &--green {
+      color: $accent-green;
+    }
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th {
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      color: $text-muted;
+      padding: 10px 12px;
+      border-bottom: 1px solid $border-color;
+    }
+
+    td {
+      font-size: 14px;
+      color: $text-primary;
+      padding: 12px;
+      border-bottom: 1px solid $border-light;
+    }
+  }
+
+  &__table-green {
+    color: $accent-green !important;
+    font-weight: 600;
+  }
+
+  &__table-bold {
+    font-weight: 700 !important;
+  }
+
+  // Sidebar
+  &__sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+  }
+
+  &__donut-section {
+    background: $bg-card;
+    border-radius: $radius-lg;
+    padding: $spacing-lg;
+    box-shadow: $shadow-card;
+  }
+
+  &__donut-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: $text-primary;
+    margin-bottom: $spacing-md;
+  }
+
+  &__donut {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    margin: 0 auto $spacing-md;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &::before {
+      content: "";
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: $bg-card;
+    }
+  }
+
+  &__donut-center {
+    position: relative;
+    z-index: 1;
+  }
+
+  &__donut-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: $text-primary;
+  }
+
+  &__donut-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__donut-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: $text-secondary;
+  }
+
+  &__donut-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  &__donut-legend-pct {
+    margin-left: auto;
+    font-weight: 600;
+    color: $text-primary;
+  }
+
+  &__schedule {
+    background: $bg-card;
+    border-radius: $radius-lg;
+    padding: $spacing-lg;
+    box-shadow: $shadow-card;
+
+    h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: $text-primary;
+      margin-bottom: $spacing-md;
+    }
+
+    &-table {
+      width: 100%;
+      border-collapse: collapse;
+
+      th {
+        text-align: left;
+        font-size: 12px;
+        color: $text-muted;
+        padding: 8px 0;
+        border-bottom: 1px solid $border-light;
+      }
+
+      td {
+        font-size: 13px;
+        color: $text-primary;
+        padding: 8px 0;
+        border-bottom: 1px solid $border-light;
+      }
+    }
+  }
+}

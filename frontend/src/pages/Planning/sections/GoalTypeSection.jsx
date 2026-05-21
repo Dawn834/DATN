@@ -1,9 +1,14 @@
+import { StepHeader } from "@/components/common/StepHeader"
 import { GOAL_TYPES } from "@/data/mockData"
 
 export function GoalTypeSection({ activeGoal, onGoalChange }) {
   return (
     <section className="goal-type">
-      <h3 className="goal-type__title">Mục tiêu tiết kiệm</h3>
+      <StepHeader
+        step={1}
+        title="Loại mục tiêu"
+        subtitle="Bạn đang tiết kiệm để làm gì?"
+      />
       <div className="goal-type__grid">
         {GOAL_TYPES.map((goal) => (
           <button

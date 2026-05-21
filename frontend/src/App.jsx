@@ -3,6 +3,7 @@ import { MainLayout } from "./components/layout/MainLayout"
 import { HomePage } from "./pages/Home"
 import { PlanningPage } from "./pages/Planning"
 import { ManagementPage } from "./pages/Management"
+import { PlanDetailPage } from "./pages/PlanDetail"
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="planning" element={<PlanningPage />} />
           <Route path="management" element={<ManagementPage />} />
+          <Route path="management/plan/:planId" element={<PlanDetailPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

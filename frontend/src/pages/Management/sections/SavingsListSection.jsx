@@ -21,11 +21,10 @@ export function SavingsListSection() {
                   <div className="savings-list__item-name">
                     {account.bankName} - {account.planName}
                     <span
-                      className={`savings-list__item-status ${
-                        account.status === "near_maturity"
-                          ? "savings-list__item-status--near"
-                          : "savings-list__item-status--active"
-                      }`}
+                      className={`savings-list__item-status ${account.status === "near_maturity"
+                        ? "savings-list__item-status--near"
+                        : "savings-list__item-status--active"
+                        }`}
                     >
                       {account.status === "near_maturity" ? "Sắp đáo hạn" : "Đang chạy"}
                     </span>
