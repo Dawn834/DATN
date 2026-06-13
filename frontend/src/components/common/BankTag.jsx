@@ -6,10 +6,10 @@ export function BankTag({ bank, isActive, onClick, className = "" }) {
       className={`bank-tag ${isActive ? "bank-tag--active" : ""} ${className}`}
       onClick={() => onClick?.(bank)}
     >
-      <span
+      {/* <span
         className="bank-tag__dot"
         style={{ background: bank.color }}
-      />
+      /> */}
       <span>{bank.name}</span>
     </button>
   )

@@ -12,14 +12,17 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Routes */}
+        {/* Public Routes without Sidebar/Header Layout */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
 
-        {/* Protected Routes */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<MainLayout />}>
-            <Route index element={<HomePage />} />
+        {/* Routes with MainLayout (Sidebar, Header, etc.) */}
+        <Route path="/" element={<MainLayout />}>
+          {/* HomePage is Public - does not require login */}
+          <Route index element={<HomePage />} />
+
+          {/* Only the following routes are Protected */}
+          <Route element={<ProtectedRoute />}>
             <Route path="planning" element={<PlanningPage />} />
             <Route path="management" element={<ManagementPage />} />
             <Route path="management/plan/:planId" element={<PlanDetailPage />} />

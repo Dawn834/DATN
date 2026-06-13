@@ -3,6 +3,59 @@ import { Search, X } from "lucide-react"
 import { bankService } from "@/services/bankService"
 import "./BankSelectorPopup.scss"
 
+// Subcomponent to handle individual logo error states safely
+function BankLogo({ bank }) {
+  const [imgError, setImgError] = useState(false)
+  const [suffixIndex, setSuffixIndex] = useState(0)
+
+  // Các hậu tố phổ biến của tên file logo ngân hàng
+  const suffixes = ["", "bank", "vn"]
+  const baseCode = bank.code?.toLowerCase().replace(/[^a-z0-9]/g, "") || ""
+  const logoUrl = `/logos/${baseCode}${suffixes[suffixIndex]}.png`
+
+  const handleError = () => {
+    // Nếu chưa thử hết các hậu tố, chuyển sang thử hậu tố tiếp theo
+    if (suffixIndex < suffixes.length - 1) {
+      setSuffixIndex((prev) => prev + 1)
+    } else {
+      // Nếu đã thử hết mà vẫn lỗi, hiện text fallback
+      setImgError(true)
+    }
+  }
+
+  // Reset trạng thái khi ngân hàng thay đổi
+  useEffect(() => {
+    setImgError(false)
+    setSuffixIndex(0)
+  }, [bank.code])
+
+  return (
+    <div
+      className="bank-popup__item-logo"
+      style={{
+        background: imgError ? bank.color : "#ffffff",
+        padding: imgError ? "0" : "4px",
+        border: imgError ? "none" : "1px solid #e2e8f0",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden"
+      }}
+    >
+      {!imgError && bank.code ? (
+        <img
+          src={logoUrl}
+          alt={bank.name}
+          onError={handleError}
+          style={{ width: "100%", height: "100%", objectFit: "contain" }}
+        />
+      ) : (
+        bank.code.substring(0, 3)
+      )}
+    </div>
+  )
+}
+
 export function BankSelectorPopup({ isOpen, onClose, onSelectBank }) {
   const [search, setSearch] = useState("")
   const [banks, setBanks] = useState([])
@@ -76,12 +129,7 @@ export function BankSelectorPopup({ isOpen, onClose, onSelectBank }) {
                 className="bank-popup__item"
                 onClick={() => handleSelect(bank)}
               >
-                <div
-                  className="bank-popup__item-logo"
-                  style={{ background: bank.color }}
-                >
-                  {bank.code.substring(0, 3)}
-                </div>
+                <BankLogo bank={bank} />
                 <div className="bank-popup__item-info">
                   <div className="bank-popup__item-code">{bank.code}</div>
                   <div className="bank-popup__item-name">{bank.name}</div>

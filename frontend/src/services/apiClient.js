@@ -9,6 +9,21 @@ function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+async function checkResponse(response, isLogin = false) {
+  if (!response.ok) {
+    if (response.status === 401 && !isLogin) {
+      const token = localStorage.getItem("datn_token");
+      if (token) {
+        localStorage.removeItem("datn_token");
+        localStorage.removeItem("datn_current_user");
+        window.location.reload();
+      }
+    }
+    throw new Error("Network response was not ok");
+  }
+  return response.json();
+}
+
 export const apiClient = {
   async get(url, options = {}) {
     console.log(`[API CLIENT] GET request to: ${url}`, options);
@@ -44,8 +59,7 @@ export const apiClient = {
     const response = await fetch(`/api/v1${finalUrl}`, {
       headers,
     });
-    if (!response.ok) throw new Error("Network response was not ok");
-    let data = await response.json();
+    let data = await checkResponse(response);
 
     // Adapt API response back to frontend-compatible format
     if (url === "/saving-plan") {
@@ -133,8 +147,7 @@ export const apiClient = {
       headers,
       body: JSON.stringify(finalBody),
     });
-    if (!response.ok) throw new Error("Network response was not ok");
-    let data = await response.json();
+    let data = await checkResponse(response);
 
     if (url === "/saving-plan") {
       data = {
@@ -166,8 +179,7 @@ export const apiClient = {
       headers,
       body: JSON.stringify(body),
     });
-    if (!response.ok) throw new Error("Network response was not ok");
-    const data = await response.json();
+    const data = await checkResponse(response);
     return { data };
   },
 
@@ -198,8 +210,7 @@ export const apiClient = {
       method: "DELETE",
       headers,
     });
-    if (!response.ok) throw new Error("Network response was not ok");
-    const data = await response.json();
+    const data = await checkResponse(response);
     return { data };
   },
 };

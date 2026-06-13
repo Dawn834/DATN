@@ -17,6 +17,12 @@ export function Header() {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
+    const token = localStorage.getItem("datn_token")
+    if (!token) {
+      setUser(null)
+      return
+    }
+
     async function fetchUserProfile() {
       try {
         const response = await apiClient.get("/auth/me")

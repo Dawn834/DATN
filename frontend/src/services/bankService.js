@@ -37,7 +37,10 @@ export const bankService = {
       if (typeof bankIdOrCode === "number" || /^\d+$/.test(bankIdOrCode)) {
         url = `/banks/bank_rates/${bankIdOrCode}`;
       } else {
-        url = `/banks/search?code=${bankIdOrCode}`;
+        const searchRes = await apiClient.get(`/banks/search?code=${bankIdOrCode}`);
+        const foundBank = Array.isArray(searchRes.data) ? searchRes.data[0] : searchRes.data;
+        if (!foundBank || !foundBank.id) return { counter: {}, online: {} };
+        url = `/banks/bank_rates/${foundBank.id}`;
       }
       const res = await apiClient.get(url);
       const bank = Array.isArray(res.data) ? res.data[0] : res.data;
@@ -104,7 +107,10 @@ export const bankService = {
       if (typeof bankIdOrCode === "number" || /^\d+$/.test(bankIdOrCode)) {
         url = `/banks/bank_rates/${bankIdOrCode}`;
       } else {
-        url = `/banks/search?code=${bankIdOrCode}`;
+        const searchRes = await apiClient.get(`/banks/search?code=${bankIdOrCode}`);
+        const foundBank = Array.isArray(searchRes.data) ? searchRes.data[0] : searchRes.data;
+        if (!foundBank || !foundBank.id) return { counter: {}, online: {} };
+        url = `/banks/bank_rates/${foundBank.id}`;
       }
       const res = await apiClient.get(url);
       const bank = Array.isArray(res.data) ? res.data[0] : res.data;
@@ -171,11 +177,64 @@ export const bankService = {
     }
   },
 
-  /** Lấy lãi suất lịch sử 6 tháng gần nhất (TODO: cần API backend hỗ trợ) */
-  async getHistoricalRates(bankId) {
-    // TODO: Backend chưa có endpoint riêng cho historical rates
-    // Khi backend có API: GET /banks/{code}/history → sử dụng apiClient.get()
-    console.warn(`[bankService] getHistoricalRates("${bankId}"): Backend chưa có API, trả về rỗng`);
-    return [];
+  /** Lấy lãi suất lịch sử 6 tháng gần nhất */
+  async getHistoricalRates(bankIdOrCode) {
+    // Để tránh xuất hiện lỗi đỏ 404 trong Console trình duyệt (do Backend chưa có API /history),
+    // chúng ta sẽ trực tiếp sử dụng dữ liệu mock đồng bộ.
+    // Khi nào Backend của bạn xây dựng xong API này, bạn chỉ cần mở lại đoạn code try-catch bên dưới.
+    
+    /*
+    try {
+      const res = await apiClient.get(`/banks/${bankIdOrCode}/history`);
+      return res.data;
+    } catch (err) {
+      console.warn(`[bankService] Lỗi gọi API history:`, err);
+    }
+    */
+      
+    // Lấy lãi suất hiện tại trước để đồng bộ kỳ hiện tại
+    let currentRates = { counter: {}, online: {} };
+    let actualCode = typeof bankIdOrCode === "string" ? bankIdOrCode : null;
+
+    try {
+      let bankData;
+      if (typeof bankIdOrCode === "number" || /^\d+$/.test(bankIdOrCode)) {
+        const res = await apiClient.get(`/banks/bank_rates/${bankIdOrCode}`);
+        bankData = Array.isArray(res.data) ? res.data[0] : res.data;
+      } else {
+        const searchRes = await apiClient.get(`/banks/search?code=${bankIdOrCode}`);
+        const foundBank = Array.isArray(searchRes.data) ? searchRes.data[0] : searchRes.data;
+        if (foundBank && foundBank.id) {
+          const res = await apiClient.get(`/banks/bank_rates/${foundBank.id}`);
+          bankData = Array.isArray(res.data) ? res.data[0] : res.data;
+        }
+      }
+
+      if (bankData) {
+        actualCode = bankData.code;
+        if (bankData.interest_rates) {
+          bankData.interest_rates.forEach((r) => {
+            if (!r.term_month || !r.channel) return;
+            const channelKey = r.channel.toUpperCase();
+            const term = r.term_month;
+            const rate = parseFloat(r.rate);
+            if (channelKey === "COUNTER") {
+              currentRates.counter[term] = rate;
+            } else if (channelKey === "ONLINE") {
+              currentRates.online[term] = rate;
+            }
+            if (channelKey === "ONLINE" || !currentRates[term]) {
+              currentRates[term] = rate;
+            }
+          });
+        }
+      }
+    } catch (e) {
+      console.warn("Không lấy được lãi suất hiện tại để đồng bộ, sử dụng dữ liệu mặc định", e);
+    }
+
+    // Trả về dữ liệu mock giả lập từ tệp tin historicalRates.js
+    const { getMockHistoricalRates } = await import("../data/historicalRates");
+    return getMockHistoricalRates(actualCode || bankIdOrCode, currentRates);
   },
 };

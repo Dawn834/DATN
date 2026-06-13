@@ -13,7 +13,8 @@ export function InterestHistorySection({ bankId, bankCode }) {
     async function fetchHistory() {
       try {
         setLoading(true)
-        const data = await bankService.getHistoricalRates(bankId)
+        // Truyền bankCode hoặc bankId để service biết cần lấy lịch sử của ngân hàng nào
+        const data = await bankService.getHistoricalRates(bankCode || bankId)
         setHistory(data)
       } catch (err) {
         console.error("Error loading historical rates:", err)
@@ -21,10 +22,10 @@ export function InterestHistorySection({ bankId, bankCode }) {
         setLoading(false)
       }
     }
-    if (bankId) {
+    if (bankId || bankCode) {
       fetchHistory()
     }
-  }, [bankId])
+  }, [bankId, bankCode])
 
   if (loading) {
     return (
