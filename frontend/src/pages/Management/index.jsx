@@ -94,13 +94,13 @@ export function ManagementPage() {
           </p>
         </div>
         <div className="management-page__actions">
-          <button 
+          <button
             className="management-page__btn management-page__btn--outline"
             onClick={() => window.print()}
           >
             In báo cáo
           </button>
-          <button 
+          <button
             className="management-page__btn management-page__btn--primary"
             onClick={() => navigate("/planning")}
           >

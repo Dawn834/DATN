@@ -126,6 +126,26 @@
       background: darken(#FF6B35, 8%);
     }
   }
+
+  &--overdue {
+    background: linear-gradient(135deg, #FEF2F2, #FEE2E2);
+    border-color: #FECACA;
+    
+    .alert-banner__icon {
+      background: #EF4444; 
+    }
+    
+    .alert-banner__text strong {
+      color: #EF4444;
+    }
+    
+    .alert-banner__cta {
+      background: #EF4444;
+      &:hover {
+        background: darken(#EF4444, 8%);
+      }
+    }
+  }
 }
 
 // ---- Stat Cards Grid ----

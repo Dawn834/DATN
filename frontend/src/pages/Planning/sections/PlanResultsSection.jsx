@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { formatCurrency } from "@/utils/formatters"
 import { PlanDetailsModal } from "@/components/common/PlanDetailsModal"
+import { Banknote } from "lucide-react"
 
 export function PlanResultsSection({ visible, results, planName, targetAmount, onSavePlan }) {
   const [selectedPlan, setSelectedPlan] = useState(null)
@@ -57,7 +58,7 @@ export function PlanResultsSection({ visible, results, planName, targetAmount, o
               <div className="plan-results__card-header">
                 <div className="plan-results__card-bank">
                   <div className="plan-results__card-logo" style={{ background: plan.bankColor || "#333" }}>
-                    {plan.bankCode}
+                    <Banknote size={20} />
                   </div>
                   <div>
                     <div className="plan-results__card-name">{plan.bankName}</div>
