@@ -32,8 +32,8 @@ export function CapitalSection({ form, onFormChange }) {
     <section className="capital-section">
       <StepHeader
         step={2}
-        title="Vốn hiện có & tiết kiệm hàng tháng"
-        subtitle="Số tiền đang có và kế hoạch gửi thêm mỗi tháng"
+        title="Vốn hiện có"
+        subtitle="Số tiền đang có để bắt đầu tích lũy"
       />
 
       <div className="capital-section__grid">
@@ -46,20 +46,6 @@ export function CapitalSection({ form, onFormChange }) {
               placeholder="150.000.000"
               value={formatCurrency(form.initialDeposit)}
               onChange={(e) => handleDepositChange("initialDeposit", e.target.value)}
-            />
-            <span className="capital-section__unit">đ</span>
-          </div>
-        </div>
-
-        <div className="capital-section__field">
-          <label className="capital-section__label">Gửi thêm hàng tháng (tùy chọn)</label>
-          <div className="capital-section__input-wrap">
-            <input
-              className="capital-section__input"
-              type="text"
-              placeholder="Nhập số tiền"
-              value={formatCurrency(form.monthlyDeposit)}
-              onChange={(e) => handleDepositChange("monthlyDeposit", e.target.value)}
             />
             <span className="capital-section__unit">đ</span>
           </div>

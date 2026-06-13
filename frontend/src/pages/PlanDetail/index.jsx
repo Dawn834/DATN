@@ -35,7 +35,6 @@ export function PlanDetailPage() {
   const generateProgressTable = (p) => {
     const table = []
     const init = p.initialDeposit || 0
-    const monthly = p.monthlyDeposit || 0
     const rate = p.rate || 0
     const term = p.term || 12
 
@@ -50,11 +49,10 @@ export function PlanDetailPage() {
       const label = `T${dateObj.getMonth() + 1}/${dateObj.getFullYear()}`
       
       const monthlyInterest = currentTotal * r_monthly
-      currentTotal = currentTotal + monthlyInterest + monthly
+      currentTotal = currentTotal + monthlyInterest
 
       table.push({
         month: label,
-        deposit: monthly,
         rate: rate,
         interest: Math.round(monthlyInterest),
         total: Math.round(currentTotal),
@@ -86,18 +84,16 @@ export function PlanDetailPage() {
 
   const statCards = [
     { icon: "💵", iconBg: "#EDF2FF", label: "Tiền gửi ban đầu", value: formatCurrency(plan.initialDeposit) },
-    { icon: "📅", iconBg: "#F0FDF4", label: "Tích lũy hàng tháng", value: plan.monthlyDeposit > 0 ? formatCurrency(plan.monthlyDeposit) : "Không gửi thêm" },
     { icon: "🎯", iconBg: "#FFF7ED", label: "Mục tiêu", value: formatCurrency(plan.targetAmount) },
     { icon: "⏳", iconBg: "#FDF2F8", label: "Kỳ hạn", value: `${plan.term} tháng` },
   ]
 
   // Tính toán phân bổ của tài khoản tiết kiệm cụ thể này
-  const totalContributed = plan.initialDeposit + (plan.monthlyDeposit * plan.term)
+  const totalContributed = plan.initialDeposit
   const totalMaturity = totalContributed + plan.estimatedInterest
 
   const donutData = [
     { label: "Vốn gốc ban đầu", amount: plan.initialDeposit, color: "#1A73E8" },
-    { label: "Vốn góp thêm", amount: plan.monthlyDeposit * plan.term, color: "#34D399" },
     { label: "Lãi dự kiến nhận", amount: plan.estimatedInterest, color: "#F59E0B" },
   ].filter(d => d.amount > 0)
 
@@ -170,12 +166,7 @@ export function PlanDetailPage() {
               <div className="plan-detail__table-info-label">Gửi ban đầu</div>
               <div className="plan-detail__table-info-value">{formatCurrency(plan.initialDeposit)}</div>
             </div>
-            <div>
-              <div className="plan-detail__table-info-label">Gửi thêm</div>
-              <div className="plan-detail__table-info-value">
-                {plan.monthlyDeposit > 0 ? formatCurrency(plan.monthlyDeposit) : "+0 đ"}
-              </div>
-            </div>
+            {/* Gửi thêm option removed */}
             <div>
               <div className="plan-detail__table-info-label">Lãi suất</div>
               <div className="plan-detail__table-info-value">{plan.rate}%/năm</div>
@@ -192,7 +183,6 @@ export function PlanDetailPage() {
             <thead>
               <tr>
                 <th>Tháng</th>
-                <th>Gửi thêm</th>
                 <th>Lãi suất thực tế</th>
                 <th>Lãi nhận trong tháng</th>
                 <th>Tổng tích lũy kế</th>
@@ -202,7 +192,6 @@ export function PlanDetailPage() {
               {monthlyData.map((row, i) => (
                 <tr key={i}>
                   <td>{row.month}</td>
-                  <td>{formatCurrency(row.deposit)}</td>
                   <td>{row.rate}%</td>
                   <td className="plan-detail__table-green">{formatCurrency(row.interest)}</td>
                   <td className="plan-detail__table-bold">{formatCurrency(row.total)}</td>
@@ -237,25 +226,7 @@ export function PlanDetailPage() {
             </div>
           </div>
 
-          <div className="plan-detail__schedule">
-            <h4>Lịch đóng tiền hàng tháng</h4>
-            <table className="plan-detail__schedule-table">
-              <thead>
-                <tr>
-                  <th>Tháng</th>
-                  <th>Số tiền nộp</th>
-                </tr>
-              </thead>
-              <tbody>
-                {monthlyData.map((row, i) => (
-                  <tr key={i}>
-                    <td>{row.month}</td>
-                    <td>{formatCurrency(row.deposit)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {/* Lịch đóng tiền hàng tháng removed */}
         </div>
       </div>
     </div>

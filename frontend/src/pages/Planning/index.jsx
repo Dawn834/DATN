@@ -19,11 +19,11 @@ export function PlanningPage() {
   const [selectedBanks, setSelectedBanks] = useState(["MB", "VIB", "VCB"])
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState([])
+  const [autoOptimize, setAutoOptimize] = useState(false)
   const [form, setForm] = useState({
     planName: "Mua xe SH",
     targetAmount: "200000000",
     initialDeposit: "150000000",
-    monthlyDeposit: "5000000",
     term: 12,
     goalType: "car",
     goalLabel: GOAL_TYPES.find((g) => g.id === "car")?.label || "",
@@ -48,7 +48,7 @@ export function PlanningPage() {
     setLoading(true)
     try {
       const initDep = parseFloat(form.initialDeposit) || 0
-      const monthDep = parseFloat(form.monthlyDeposit) || 0
+      const monthDep = 0
       const termMonths = parseInt(form.term) || 12
 
       if (form.rateType === "dynamic") {
@@ -59,7 +59,7 @@ export function PlanningPage() {
           total_amount: initDep,
           goal_amount: parseFloat(form.targetAmount) || 0,
           prefer_rate: "ONLINE",
-          codes: selectedBanks,
+          codes: autoOptimize ? [] : selectedBanks,
           notes: form.goalLabel || "",
         }
 
@@ -137,7 +137,7 @@ export function PlanningPage() {
         goalType: form.goalType,
         targetAmount: parseFloat(form.targetAmount) || 0,
         initialDeposit: parseFloat(form.initialDeposit) || 0,
-        monthlyDeposit: parseFloat(form.monthlyDeposit) || 0,
+        monthlyDeposit: 0,
         currentAmount: parseFloat(form.initialDeposit) || 0,
         rate: selectedResult.rate,
         term: selectedResult.term,
@@ -173,7 +173,14 @@ export function PlanningPage() {
 
           <RateTypeSection form={form} onFormChange={setForm} />
 
-          <BankSelectionSection selectedBanks={selectedBanks} onToggleBank={handleToggleBank} />
+          {form.rateType === "dynamic" && (
+            <BankSelectionSection
+              selectedBanks={selectedBanks}
+              onToggleBank={handleToggleBank}
+              autoOptimize={autoOptimize}
+              onToggleAutoOptimize={() => setAutoOptimize((prev) => !prev)}
+            />
+          )}
 
           <button className="planning-submit" onClick={handleCalculate} disabled={loading}>
             {loading ? "✨ Đang tính toán..." : "✨ Tìm gói tiết kiệm tốt nhất →"}

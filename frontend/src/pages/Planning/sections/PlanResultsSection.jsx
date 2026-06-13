@@ -1,6 +1,10 @@
+import { useState } from "react"
 import { formatCurrency } from "@/utils/formatters"
+import { PlanDetailsModal } from "@/components/common/PlanDetailsModal"
 
 export function PlanResultsSection({ visible, results, planName, targetAmount, onSavePlan }) {
+  const [selectedPlan, setSelectedPlan] = useState(null)
+
   if (!visible || !results || results.length === 0) return null
 
   // Tính toán tiến độ dựa trên phương án tốt nhất (nằm đầu danh sách)
@@ -88,16 +92,7 @@ export function PlanResultsSection({ visible, results, planName, targetAmount, o
                 </button>
                 <button 
                   className="plan-results__card-btn plan-results__card-btn--outline"
-                  onClick={() => {
-                    if (plan.isDynamic && plan.planDetails) {
-                      const stepText = plan.planDetails.steps
-                        .map((s) => `• Tháng ${s.month || 0}: ${s.note || ''}`)
-                        .join("\n\n");
-                      alert(`Kế hoạch phân bổ chi tiết (Thuật toán DP):\n\n${stepText}`);
-                    } else {
-                      alert(`Lãi suất tại ${plan.bankName} hiện tại là ${plan.rate}%. Hãy hỏi AI chatbot để xem tư vấn thêm!`);
-                    }
-                  }}
+                  onClick={() => setSelectedPlan(plan)}
                 >
                   Chi tiết
                 </button>
@@ -106,6 +101,12 @@ export function PlanResultsSection({ visible, results, planName, targetAmount, o
           )
         )}
       </div>
+
+      <PlanDetailsModal 
+        isOpen={!!selectedPlan}
+        onClose={() => setSelectedPlan(null)}
+        plan={selectedPlan}
+      />
     </section>
   )
 }

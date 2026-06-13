@@ -18,8 +18,8 @@ export const bankService = {
 
   /** Lấy thông tin 1 ngân hàng theo mã (VCB, BIDV...) */
   async getBankByCode(code) {
-    const res = await apiClient.get(`/banks/${code}`);
-    return res.data;
+    const res = await apiClient.get(`/banks/search?code=${encodeURIComponent(code)}`);
+    return Array.isArray(res.data) ? res.data[0] : res.data;
   },
 
   /** Lấy bảng lãi suất theo kỳ hạn & số tiền */

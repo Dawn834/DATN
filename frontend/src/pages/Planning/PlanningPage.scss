@@ -363,11 +363,93 @@
   padding: $spacing-lg;
   box-shadow: $shadow-card;
 
+  &__mode-toggle {
+    display: flex;
+    gap: 8px;
+    margin-bottom: $spacing-md;
+    padding: 4px;
+    background: $bg-muted;
+    border-radius: $radius-md;
+  }
+
+  &__mode-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 2px solid transparent;
+    border-radius: $radius-sm;
+    background: transparent;
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-muted;
+    cursor: pointer;
+    transition: all 0.25s ease;
+
+    &:hover:not(&--active) {
+      color: $text-secondary;
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    &--active {
+      background: $bg-card;
+      color: $primary-blue;
+      border-color: $primary-blue;
+      box-shadow: 0 2px 8px rgba($primary-blue, 0.12);
+    }
+
+    &--auto.bank-selection__mode-btn--active {
+      color: #e67700;
+      border-color: #e67700;
+      box-shadow: 0 2px 8px rgba(#e67700, 0.12);
+    }
+  }
+
+  &__mode-icon {
+    font-size: 16px;
+  }
+
+  &__auto-message {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+    background: linear-gradient(135deg, #fff9db 0%, #fff3bf 100%);
+    border: 1px solid #ffd43b;
+    border-radius: $radius-md;
+    animation: fadeSlideIn 0.3s ease;
+  }
+
+  &__auto-icon {
+    font-size: 32px;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  &__auto-content {
+    strong {
+      font-size: 14px;
+      font-weight: 700;
+      color: #e67700;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    p {
+      font-size: 13px;
+      color: #664d03;
+      line-height: 1.6;
+      margin: 0;
+    }
+  }
+
   &__grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 8px;
-    margin-bottom: 12px;
+    animation: fadeSlideIn 0.3s ease;
   }
 
   &__item {
@@ -406,19 +488,16 @@
     border-radius: 50%;
     flex-shrink: 0;
   }
+}
 
-  &__more {
-    font-size: 13px;
-    color: $primary-blue;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    padding: 0;
-
-    &:hover {
-      text-decoration: underline;
-    }
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

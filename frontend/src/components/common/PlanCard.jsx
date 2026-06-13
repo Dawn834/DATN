@@ -38,9 +38,7 @@ export function PlanCard({ plan, onViewDetail, onCreatePlan }) {
           <span className="plan-card__detail-amount">
             {formatCurrency(plan.initialDeposit || plan.currentAmount || 0)}
           </span>
-          <span className="plan-card__detail-change">
-            {plan.monthlyDeposit > 0 ? `+${formatCurrency(plan.monthlyDeposit)}` : ""}
-          </span>
+
         </div>
         {plan.rate && (
           <div className="plan-card__rate">

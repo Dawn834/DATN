@@ -48,7 +48,6 @@ export function PlanListSection({ plans, onDeletePlan }) {
                   <div className="plan-list__card-banks">
                     <span className="plan-list__card-bank-item">
                       🏦 {plan.bankName} {formatCurrency(plan.initialDeposit)}
-                      {plan.monthlyDeposit > 0 && <span className="plan-list__card-change"> +{formatCurrency(plan.monthlyDeposit)}/tháng</span>}
                     </span>
                   </div>
                   {plan.rate && (

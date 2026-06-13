@@ -4,11 +4,10 @@ import { GOAL_TYPES } from "@/constants/planningConstants"
 export function PlanSummaryAside({ form }) {
   const target = Number(form.targetAmount) || 0
   const initial = Number(form.initialDeposit) || 0
-  const monthly = Number(form.monthlyDeposit) || 0
   const term = form.term || 24
   const rate = 5.09
 
-  const totalDeposit = initial + monthly * term
+  const totalDeposit = initial
   const estimatedInterest = Math.round(totalDeposit * (rate / 100) * (term / 12))
   const totalMaturity = totalDeposit + estimatedInterest
 
@@ -30,10 +29,6 @@ export function PlanSummaryAside({ form }) {
       <div className="plan-aside__row">
         <span className="plan-aside__row-label">Hiện có</span>
         <span className="plan-aside__row-value">{initial > 0 ? formatCurrency(initial) : "0 đ"}</span>
-      </div>
-      <div className="plan-aside__row">
-        <span className="plan-aside__row-label">Tích lũy thêm</span>
-        <span className="plan-aside__row-value">{monthly > 0 ? formatCurrency(monthly) : "0 đ"}</span>
       </div>
 
       <div className="plan-aside__divider" />

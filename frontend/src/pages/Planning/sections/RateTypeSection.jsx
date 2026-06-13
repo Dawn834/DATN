@@ -22,7 +22,7 @@ export function RateTypeSection({ form, onFormChange }) {
         >
           <span className="rate-type-section__item-icon">🔒</span>
           <div className="rate-type-section__item-content">
-            <span className="rate-type-section__item-label">Lãi suất cứng</span>
+            <span className="rate-type-section__item-label">Gửi cố định</span>
             <span className="rate-type-section__item-desc">
               Gửi cố định 1 kỳ hạn duy nhất suốt thời gian tích lũy. An toàn, dễ quản lý.
             </span>
@@ -36,9 +36,9 @@ export function RateTypeSection({ form, onFormChange }) {
         >
           <span className="rate-type-section__item-icon">⚡</span>
           <div className="rate-type-section__item-content">
-            <span className="rate-type-section__item-label">Lãi suất động</span>
+            <span className="rate-type-section__item-label">Gửi linh hoạt</span>
             <span className="rate-type-section__item-desc">
-              Tối ưu chia nhỏ và tái tục kỳ hạn thông minh (Dynamic Programming). Lợi nhuận cao nhất.
+              Tối ưu chia nhỏ và tái tục kỳ hạn thông minh (Dynamic Programming). Đề xuất lợi nhuận tối ưu nhất dựa trên lãi suất hiện tại.
             </span>
           </div>
         </button>
