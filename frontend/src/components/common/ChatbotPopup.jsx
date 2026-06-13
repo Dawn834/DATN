@@ -1,5 +1,6 @@
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { MessageCircle, X, Send } from "lucide-react"
+import { chatbotService } from "@/services/chatbotService"
 import "./ChatbotPopup.scss"
 
 const QUICK_REPLIES = [
@@ -17,23 +18,47 @@ export function ChatbotPopup() {
     },
   ])
   const [input, setInput] = useState("")
+  const [isTyping, setIsTyping] = useState(false)
+
+  const messagesEndRef = useRef(null)
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(() => {
+    if (isOpen) {
+      scrollToBottom()
+    }
+  }, [messages, isTyping, isOpen])
+
+  const processResponse = async (text) => {
+    setIsTyping(true)
+    try {
+      const response = await chatbotService.sendMessage(messages, text)
+      setMessages((prev) => [...prev, response])
+    } catch (err) {
+      setMessages((prev) => [
+        ...prev,
+        { role: "ai", content: "Xin lỗi, đã có lỗi kết nối xảy ra. Vui lòng thử lại!" },
+      ])
+    } finally {
+      setIsTyping(false)
+    }
+  }
 
   const handleSend = () => {
-    if (!input.trim()) return
-    setMessages((prev) => [
-      ...prev,
-      { role: "user", content: input },
-      { role: "ai", content: "Cảm ơn bạn! Tôi đang xử lý câu hỏi của bạn. Tính năng AI sẽ được tích hợp sau." },
-    ])
+    if (!input.trim() || isTyping) return
+    const userText = input
+    setMessages((prev) => [...prev, { role: "user", content: userText }])
     setInput("")
+    processResponse(userText)
   }
 
   const handleQuickReply = (text) => {
-    setMessages((prev) => [
-      ...prev,
-      { role: "user", content: text },
-      { role: "ai", content: "Cảm ơn bạn! Tôi đang xử lý câu hỏi của bạn. Tính năng AI sẽ được tích hợp sau." },
-    ])
+    if (isTyping) return
+    setMessages((prev) => [...prev, { role: "user", content: text }])
+    processResponse(text)
   }
 
   return (
@@ -77,17 +102,29 @@ export function ChatbotPopup() {
                 <div className="chatbot-popup__msg-bubble">{msg.content}</div>
               </div>
             ))}
+            {isTyping && (
+              <div className="chatbot-popup__msg chatbot-popup__msg--ai">
+                <span className="chatbot-popup__msg-avatar">AI</span>
+                <div className="chatbot-popup__msg-bubble chatbot-popup__msg-bubble--typing">
+                  <span className="dot"></span>
+                  <span className="dot"></span>
+                  <span className="dot"></span>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
           </div>
 
           <div className="chatbot-popup__input">
             <input
               type="text"
-              placeholder="Nhập câu hỏi..."
+              placeholder={isTyping ? "AI đang trả lời..." : "Nhập câu hỏi..."}
               value={input}
+              disabled={isTyping}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
             />
-            <button className="chatbot-popup__send" onClick={handleSend}>
+            <button className="chatbot-popup__send" onClick={handleSend} disabled={isTyping}>
               Gửi
             </button>
           </div>

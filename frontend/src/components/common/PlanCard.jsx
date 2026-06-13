@@ -1,14 +1,15 @@
-import { BANKS, formatCurrency } from "@/data/mockData"
+import { formatCurrency } from "@/utils/formatters"
 import "./PlanCard.scss"
 
 export function PlanCard({ plan, onViewDetail, onCreatePlan }) {
-  const bank = BANKS.find((b) => b.code === plan.bankCode)
+  // bankColor nên được truyền trong plan data từ API, fallback nếu không có
+  const bankColor = plan.bankColor || "#333"
 
   return (
     <div className={`plan-card ${plan.badge === "Tốt nhất" ? "plan-card--best" : ""}`}>
       <div className="plan-card__header">
         <div className="plan-card__bank">
-          <div className="plan-card__bank-logo" style={{ background: bank?.color || "#333" }}>
+          <div className="plan-card__bank-logo" style={{ background: bankColor }}>
             {plan.bankCode}
           </div>
           <div>

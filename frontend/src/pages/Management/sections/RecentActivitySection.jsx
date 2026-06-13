@@ -1,4 +1,4 @@
-import { RECENT_ACTIVITIES } from "@/data/mockData"
+import { useState, useEffect } from "react"
 
 const ICONS = {
   deposit: { emoji: "💵", type: "deposit" },
@@ -8,11 +8,27 @@ const ICONS = {
 }
 
 export function RecentActivitySection() {
+  // TODO: Khi backend có API cho activities (GET /activities), thay thế bằng API call:
+  // const activities = await apiClient.get("/activities")
+  // Hiện tại hiển thị thông báo chưa có dữ liệu
+  const [activities] = useState([])
+
+  if (activities.length === 0) {
+    return (
+      <section className="recent-activity">
+        <h3 className="recent-activity__title">Hoạt động gần đây</h3>
+        <div style={{ textAlign: "center", padding: "30px", color: "#94A3B8" }}>
+          Chưa có hoạt động nào được ghi nhận.
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section className="recent-activity">
       <h3 className="recent-activity__title">Hoạt động gần đây</h3>
       <div className="recent-activity__list">
-        {RECENT_ACTIVITIES.map((activity) => {
+        {activities.map((activity) => {
           const icon = ICONS[activity.type] || ICONS.deposit
           return (
             <div key={activity.id} className="recent-activity__item">

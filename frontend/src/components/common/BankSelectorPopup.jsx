@@ -1,14 +1,33 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Search, X } from "lucide-react"
-import { BANKS } from "@/data/mockData"
+import { bankService } from "@/services/bankService"
 import "./BankSelectorPopup.scss"
 
 export function BankSelectorPopup({ isOpen, onClose, onSelectBank }) {
   const [search, setSearch] = useState("")
+  const [banks, setBanks] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  // Fetch danh sách ngân hàng từ API khi popup mở
+  useEffect(() => {
+    if (!isOpen) return
+    async function loadBanks() {
+      try {
+        setLoading(true)
+        const data = await bankService.getBanks()
+        setBanks(data)
+      } catch (err) {
+        console.error("Lỗi khi tải danh sách ngân hàng:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadBanks()
+  }, [isOpen])
 
   if (!isOpen) return null
 
-  const filteredBanks = BANKS.filter(
+  const filteredBanks = banks.filter(
     (bank) =>
       bank.name.toLowerCase().includes(search.toLowerCase()) ||
       bank.code.toLowerCase().includes(search.toLowerCase())
@@ -46,24 +65,30 @@ export function BankSelectorPopup({ isOpen, onClose, onSelectBank }) {
         </div>
 
         <div className="bank-popup__grid">
-          {filteredBanks.map((bank) => (
-            <button
-              key={bank.code}
-              className="bank-popup__item"
-              onClick={() => handleSelect(bank)}
-            >
-              <div
-                className="bank-popup__item-logo"
-                style={{ background: bank.color }}
+          {loading ? (
+            <div style={{ textAlign: "center", padding: "20px", color: "#64748B" }}>
+              Đang tải danh sách ngân hàng...
+            </div>
+          ) : (
+            filteredBanks.map((bank) => (
+              <button
+                key={bank.code}
+                className="bank-popup__item"
+                onClick={() => handleSelect(bank)}
               >
-                {bank.code.substring(0, 3)}
-              </div>
-              <div className="bank-popup__item-info">
-                <div className="bank-popup__item-code">{bank.code}</div>
-                <div className="bank-popup__item-name">{bank.name}</div>
-              </div>
-            </button>
-          ))}
+                <div
+                  className="bank-popup__item-logo"
+                  style={{ background: bank.color }}
+                >
+                  {bank.code.substring(0, 3)}
+                </div>
+                <div className="bank-popup__item-info">
+                  <div className="bank-popup__item-code">{bank.code}</div>
+                  <div className="bank-popup__item-name">{bank.name}</div>
+                </div>
+              </button>
+            ))
+          )}
         </div>
       </div>
     </div>

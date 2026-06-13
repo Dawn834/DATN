@@ -1,19 +1,68 @@
-import { SAVINGS_ACCOUNTS, BANKS, formatCurrency } from "@/data/mockData"
+import { useState, useEffect } from "react"
+import { formatCurrency } from "@/utils/formatters"
+import { savingPlanService } from "@/services/savingPlanService"
 
 export function SavingsListSection() {
+  const [accounts, setAccounts] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadAccounts() {
+      try {
+        setLoading(true)
+        // TODO: Khi backend có API riêng cho savings accounts, thay thế
+        // Hiện tại dùng saving plans làm dữ liệu hiển thị
+        const plans = await savingPlanService.getPlans()
+        setAccounts(plans)
+      } catch (err) {
+        console.error("Lỗi khi tải danh sách khoản tiết kiệm:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadAccounts()
+  }, [])
+
+  if (loading) {
+    return (
+      <section className="savings-list">
+        <h3 className="savings-list__title">Danh sách khoản tiết kiệm</h3>
+        <div style={{ textAlign: "center", padding: "30px", color: "#64748B" }}>
+          Đang tải danh sách...
+        </div>
+      </section>
+    )
+  }
+
+  if (accounts.length === 0) {
+    return (
+      <section className="savings-list">
+        <h3 className="savings-list__title">Danh sách khoản tiết kiệm</h3>
+        <div style={{ textAlign: "center", padding: "30px", color: "#94A3B8" }}>
+          Chưa có khoản tiết kiệm nào.
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section className="savings-list">
       <h3 className="savings-list__title">Danh sách khoản tiết kiệm</h3>
 
-      {SAVINGS_ACCOUNTS.map((account) => {
-        const bank = BANKS.find((b) => b.code === account.bankCode)
+      {accounts.map((account) => {
+        const bankColor = account.bankColor || "#333"
+        const progress = account.targetAmount > 0
+          ? Math.min(100, Math.round((account.currentAmount / account.targetAmount) * 100))
+          : 0
+        const isNearMaturity = progress >= 90
+
         return (
           <div key={account.id} className="savings-list__item">
             <div className="savings-list__item-header">
               <div className="savings-list__item-bank">
                 <div
                   className="savings-list__item-logo"
-                  style={{ background: bank?.color || "#333" }}
+                  style={{ background: bankColor }}
                 >
                   {account.bankCode}
                 </div>
@@ -21,12 +70,12 @@ export function SavingsListSection() {
                   <div className="savings-list__item-name">
                     {account.bankName} - {account.planName}
                     <span
-                      className={`savings-list__item-status ${account.status === "near_maturity"
+                      className={`savings-list__item-status ${isNearMaturity
                         ? "savings-list__item-status--near"
                         : "savings-list__item-status--active"
                         }`}
                     >
-                      {account.status === "near_maturity" ? "Sắp đáo hạn" : "Đang chạy"}
+                      {isNearMaturity ? "Sắp đáo hạn" : "Đang chạy"}
                     </span>
                   </div>
                   <div className="savings-list__item-plan">
@@ -41,15 +90,15 @@ export function SavingsListSection() {
               <div
                 className="savings-list__progress-fill"
                 style={{
-                  width: `${account.progress}%`,
-                  background: account.status === "near_maturity" ? "#F97316" : "#1A73E8",
+                  width: `${progress}%`,
+                  background: isNearMaturity ? "#F97316" : "#1A73E8",
                 }}
               />
             </div>
 
             <div className="savings-list__item-footer">
               <span>{formatCurrency(account.currentAmount)} / {formatCurrency(account.targetAmount)}</span>
-              <span>{account.progress}% hoàn thành</span>
+              <span>{progress}% hoàn thành</span>
             </div>
           </div>
         )

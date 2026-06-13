@@ -1,25 +1,33 @@
 import { useState } from "react"
-import { GOAL_TYPES } from "@/data/mockData"
+import { useNavigate } from "react-router-dom"
+import { GOAL_TYPES } from "@/constants/planningConstants"
 import { GoalTypeSection } from "./sections/GoalTypeSection"
 import { PlanFormSection } from "./sections/PlanFormSection"
 import { CapitalSection } from "./sections/CapitalSection"
+import { RateTypeSection } from "./sections/RateTypeSection"
 import { PlanSummaryAside } from "./sections/PlanSummaryAside"
 import { BankSelectionSection } from "./sections/BankSelectionSection"
 import { PlanResultsSection } from "./sections/PlanResultsSection"
+import { bankService } from "@/services/bankService"
+import { savingPlanService } from "@/services/savingPlanService"
 import "./PlanningPage.scss"
 
 export function PlanningPage() {
+  const navigate = useNavigate()
   const [activeGoal, setActiveGoal] = useState("car")
   const [showResults, setShowResults] = useState(false)
   const [selectedBanks, setSelectedBanks] = useState(["MB", "VIB", "VCB"])
+  const [loading, setLoading] = useState(false)
+  const [results, setResults] = useState([])
   const [form, setForm] = useState({
     planName: "Mua xe SH",
     targetAmount: "200000000",
     initialDeposit: "150000000",
-    monthlyDeposit: "0",
-    term: 24,
+    monthlyDeposit: "5000000",
+    term: 12,
     goalType: "car",
     goalLabel: GOAL_TYPES.find((g) => g.id === "car")?.label || "",
+    rateType: "fixed",
   })
 
   const handleGoalChange = (goalId) => {
@@ -36,12 +44,122 @@ export function PlanningPage() {
     )
   }
 
+  const handleCalculate = async () => {
+    setLoading(true)
+    try {
+      const initDep = parseFloat(form.initialDeposit) || 0
+      const monthDep = parseFloat(form.monthlyDeposit) || 0
+      const termMonths = parseInt(form.term) || 12
+
+      if (form.rateType === "dynamic") {
+        // Lấy từ API tối ưu hóa động của backend
+        const payload = {
+          name: form.planName,
+          duration_month: termMonths,
+          total_amount: initDep,
+          goal_amount: parseFloat(form.targetAmount) || 0,
+          prefer_rate: "ONLINE",
+          codes: selectedBanks,
+          notes: form.goalLabel || "",
+        }
+
+        const optimizeResult = await savingPlanService.optimizePlan(payload)
+
+        if (optimizeResult && optimizeResult.top_plans) {
+          const formatted = optimizeResult.top_plans.map((plan, index) => ({
+            id: `dynamic_${plan.rank || index}`,
+            bankCode: "DYNAMIC",
+            bankName: `Tối ưu Động (${plan.banks_used?.join(", ") || "Đa ngân hàng"})`,
+            bankColor: "#3B5BDB",
+            rate: parseFloat(plan.interest_rate_effective_pct?.toFixed(2) || 0),
+            term: termMonths,
+            totalAmount: Math.round(plan.final_amount),
+            interestEarned: Math.round(plan.interest_earned),
+            badge: index === 0 ? "Tối ưu nhất (Lãi suất động)" : "",
+            isDynamic: true,
+            planDetails: plan,
+          }))
+          setResults(formatted)
+        } else {
+          setResults([])
+        }
+      } else {
+        // Lãi suất cứng (Gọi API của backend)
+        const payload = {
+          total_amount: initDep,
+          term_month: termMonths,
+          channel: "ONLINE",
+        }
+
+        const fixedResult = await savingPlanService.planByTerm(payload)
+
+        if (fixedResult) {
+          const bank = await bankService.getBankByCode(fixedResult.bank_code)
+          const formatted = [{
+            id: fixedResult.bank_code,
+            bankCode: fixedResult.bank_code,
+            bankName: fixedResult.bank_name,
+            bankColor: bank ? bank.color : "#1A73E8",
+            rate: fixedResult.annual_rate_pct,
+            term: fixedResult.term_month,
+            totalAmount: Math.round(fixedResult.final_amount),
+            interestEarned: Math.round(fixedResult.achieved_interest),
+            badge: "Lãi suất tốt nhất (Cố định)",
+            isDynamic: false,
+            planDetails: fixedResult.plan_details,
+          }]
+          setResults(formatted)
+        } else {
+          setResults([])
+        }
+      }
+      setShowResults(true)
+    } catch (err) {
+      console.error("Calculation error:", err)
+      alert("Lỗi khi lập kế hoạch: " + (err.message || err))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleSavePlan = async (selectedResult) => {
+    try {
+      const now = new Date()
+      const startDateStr = `${String(now.getDate()).padStart(2, "0")}/${String(now.getMonth() + 1).padStart(2, "0")}/${now.getFullYear()}`
+      
+      const endDate = new Date(now.setMonth(now.getMonth() + selectedResult.term))
+      const endDateStr = `${String(endDate.getDate()).padStart(2, "0")}/${String(endDate.getMonth() + 1).padStart(2, "0")}/${endDate.getFullYear()}`
+
+      const newPlan = {
+        planName: form.planName,
+        bankCode: selectedResult.bankCode,
+        bankName: selectedResult.bankName,
+        goalType: form.goalType,
+        targetAmount: parseFloat(form.targetAmount) || 0,
+        initialDeposit: parseFloat(form.initialDeposit) || 0,
+        monthlyDeposit: parseFloat(form.monthlyDeposit) || 0,
+        currentAmount: parseFloat(form.initialDeposit) || 0,
+        rate: selectedResult.rate,
+        term: selectedResult.term,
+        startDate: startDateStr,
+        endDate: endDateStr,
+        estimatedInterest: selectedResult.interestEarned,
+      }
+
+      await savingPlanService.createPlan(newPlan)
+      alert("Đã lưu kế hoạch tiết kiệm thành công!")
+      navigate("/management")
+    } catch (err) {
+      alert("Không thể lưu kế hoạch: " + err.message)
+    }
+  }
+
   return (
     <div className="planning-page">
       <div className="planning-page__header">
         <h1 className="planning-page__title">Lập kế hoạch tiết kiệm</h1>
         <p className="planning-page__subtitle">
-          Nhập mục tiêu — Hệ thống đề xuất gói tiết kiệm tốt ưu từ 22 ngân hàng
+          Nhập mục tiêu — Hệ thống đề xuất gói tiết kiệm tối ưu từ 20 ngân hàng
         </p>
       </div>
 
@@ -53,17 +171,25 @@ export function PlanningPage() {
 
           <CapitalSection form={form} onFormChange={setForm} />
 
+          <RateTypeSection form={form} onFormChange={setForm} />
+
           <BankSelectionSection selectedBanks={selectedBanks} onToggleBank={handleToggleBank} />
 
-          <button className="planning-submit" onClick={() => setShowResults(true)}>
-            ✨ Tìm gói tiết kiệm tốt nhất →
+          <button className="planning-submit" onClick={handleCalculate} disabled={loading}>
+            {loading ? "✨ Đang tính toán..." : "✨ Tìm gói tiết kiệm tốt nhất →"}
           </button>
         </div>
 
         <PlanSummaryAside form={form} />
       </div>
 
-      <PlanResultsSection visible={showResults} />
+      <PlanResultsSection
+        visible={showResults}
+        results={results}
+        planName={form.planName}
+        targetAmount={parseFloat(form.targetAmount) || 0}
+        onSavePlan={handleSavePlan}
+      />
     </div>
   )
 }

@@ -1,33 +1,110 @@
+import { useState, useEffect } from "react"
 import { useParams, Link } from "react-router-dom"
-import { SAVINGS_PLANS, BANKS, formatCurrency, ASSET_ALLOCATION } from "@/data/mockData"
+import { formatCurrency, formatShortCurrency } from "@/utils/formatters"
 import { StatCard } from "@/components/common/StatCard"
+import { savingPlanService } from "@/services/savingPlanService"
 import "./PlanDetailPage.scss"
-
-// Mock monthly detail data
-const MONTHLY_DATA = [
-  { month: "T9/2025", deposit: 10000000, rate: 4.2, interest: 2450000, total: 2450000 },
-  { month: "T10/2025", deposit: 10000000, rate: 4.2, interest: 3120000, total: 5570000 },
-  { month: "T11/2025", deposit: 10000000, rate: 4.3, interest: 3371390, total: 8947390 },
-]
 
 export function PlanDetailPage() {
   const { planId } = useParams()
-  const plan = SAVINGS_PLANS.find((p) => p.id === Number(planId)) || SAVINGS_PLANS[0]
-  const bank = BANKS.find((b) => b.code === plan.bankCode) || {}
+  const [plan, setPlan] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [monthlyData, setMonthlyData] = useState([])
+
+  useEffect(() => {
+    async function loadPlanDetail() {
+      try {
+        setLoading(true)
+        const data = await savingPlanService.getPlanById(planId)
+        if (data) {
+          setPlan(data)
+          // Tạo bảng tiến độ dòng tiền hàng tháng tự động
+          const table = generateProgressTable(data)
+          setMonthlyData(table)
+        }
+      } catch (err) {
+        console.error("Error loading plan details:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadPlanDetail()
+  }, [planId])
+
+  // Hàm tự động tính toán dòng tiền lãi hàng tháng
+  const generateProgressTable = (p) => {
+    const table = []
+    const init = p.initialDeposit || 0
+    const monthly = p.monthlyDeposit || 0
+    const rate = p.rate || 0
+    const term = p.term || 12
+
+    const parts = (p.startDate || "01/01/2026").split("/")
+    let dateObj = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]))
+
+    let currentTotal = init
+    const r_monthly = (rate / 100) / 12
+
+    for (let i = 1; i <= term; i++) {
+      dateObj.setMonth(dateObj.getMonth() + 1)
+      const label = `T${dateObj.getMonth() + 1}/${dateObj.getFullYear()}`
+      
+      const monthlyInterest = currentTotal * r_monthly
+      currentTotal = currentTotal + monthlyInterest + monthly
+
+      table.push({
+        month: label,
+        deposit: monthly,
+        rate: rate,
+        interest: Math.round(monthlyInterest),
+        total: Math.round(currentTotal),
+      })
+    }
+    return table
+  }
+
+  if (loading) {
+    return (
+      <div className="plan-detail" style={{ padding: "40px", textAlign: "center" }}>
+        <div style={{ fontSize: "16px", color: "#64748B" }}>Đang tải chi tiết kế hoạch...</div>
+      </div>
+    )
+  }
+
+  if (!plan) {
+    return (
+      <div className="plan-detail" style={{ padding: "40px", textAlign: "center" }}>
+        <div style={{ fontSize: "16px", color: "#EF4444" }}>Không tìm thấy kế hoạch tiết kiệm nào!</div>
+        <Link to="/management" style={{ marginTop: "20px", display: "inline-block", color: "#1A73E8" }}>
+          Quay lại quản lý
+        </Link>
+      </div>
+    )
+  }
+
+  const bank = { name: plan.bankName || plan.bankCode, color: plan.bankColor || "#333" }
 
   const statCards = [
-    { icon: "💵", iconBg: "#EDF2FF", label: "Số tiền ban đầu", value: formatCurrency(plan.initialDeposit) },
-    { icon: "📅", iconBg: "#F0FDF4", label: "Số tiền gửi thêm hàng tháng", value: formatCurrency(plan.monthlyDeposit) },
+    { icon: "💵", iconBg: "#EDF2FF", label: "Tiền gửi ban đầu", value: formatCurrency(plan.initialDeposit) },
+    { icon: "📅", iconBg: "#F0FDF4", label: "Tích lũy hàng tháng", value: plan.monthlyDeposit > 0 ? formatCurrency(plan.monthlyDeposit) : "Không gửi thêm" },
     { icon: "🎯", iconBg: "#FFF7ED", label: "Mục tiêu", value: formatCurrency(plan.targetAmount) },
     { icon: "⏳", iconBg: "#FDF2F8", label: "Kỳ hạn", value: `${plan.term} tháng` },
   ]
 
-  // Donut chart for this plan
+  // Tính toán phân bổ của tài khoản tiết kiệm cụ thể này
+  const totalContributed = plan.initialDeposit + (plan.monthlyDeposit * plan.term)
+  const totalMaturity = totalContributed + plan.estimatedInterest
+
   const donutData = [
-    { label: bank.name, percentage: 72, color: bank.color || "#333" },
-    { label: "Mua xe", percentage: 23, color: "#3B5BDB" },
-    { label: "Du lịch", percentage: 5, color: "#22C55E" },
-  ]
+    { label: "Vốn gốc ban đầu", amount: plan.initialDeposit, color: "#1A73E8" },
+    { label: "Vốn góp thêm", amount: plan.monthlyDeposit * plan.term, color: "#34D399" },
+    { label: "Lãi dự kiến nhận", amount: plan.estimatedInterest, color: "#F59E0B" },
+  ].filter(d => d.amount > 0)
+
+  const donutTotal = donutData.reduce((sum, d) => sum + d.amount, 0)
+  donutData.forEach(d => {
+    d.percentage = donutTotal > 0 ? Math.round((d.amount / donutTotal) * 100) : 0
+  })
 
   let gradientParts = []
   let currentPct = 0
@@ -36,6 +113,9 @@ export function PlanDetailPage() {
     gradientParts.push(`${d.color} ${currentPct}% ${nextPct}%`)
     currentPct = nextPct
   })
+
+  // Tính tổng lãi cộng dồn
+  const accumulatedInterest = plan.estimatedInterest
 
   return (
     <div className="plan-detail">
@@ -55,8 +135,12 @@ export function PlanDetailPage() {
           </h1>
         </div>
         <div className="plan-detail__header-actions">
-          <button className="plan-detail__btn plan-detail__btn--outline">Xuất báo cáo</button>
-          <button className="plan-detail__btn plan-detail__btn--primary">⚡ Lên kế hoạch mới ngay</button>
+          <button className="plan-detail__btn plan-detail__btn--outline" onClick={() => window.print()}>
+            In báo cáo
+          </button>
+          <Link to="/planning" className="plan-detail__btn plan-detail__btn--primary">
+            ⚡ Lập kế hoạch mới ngay
+          </Link>
         </div>
       </div>
 
@@ -78,12 +162,12 @@ export function PlanDetailPage() {
               <div>
                 <div className="plan-detail__table-bank-name">{bank.name}</div>
                 <div className="plan-detail__table-bank-meta">
-                  Kỳ hạn {plan.term} tháng · Mở {plan.startDate}
+                  Kỳ hạn {plan.term} tháng · Mở ngày {plan.startDate}
                 </div>
               </div>
             </div>
             <div>
-              <div className="plan-detail__table-info-label">Số tiền ban đầu</div>
+              <div className="plan-detail__table-info-label">Gửi ban đầu</div>
               <div className="plan-detail__table-info-value">{formatCurrency(plan.initialDeposit)}</div>
             </div>
             <div>
@@ -97,9 +181,9 @@ export function PlanDetailPage() {
               <div className="plan-detail__table-info-value">{plan.rate}%/năm</div>
             </div>
             <div>
-              <div className="plan-detail__table-info-label">Lãi tích lũy</div>
+              <div className="plan-detail__table-info-label">Lãi dự kiến</div>
               <div className="plan-detail__table-info-value plan-detail__table-info-value--green">
-                +{formatCurrency(plan.totalAmount - plan.initialDeposit)}
+                +{formatCurrency(accumulatedInterest)}
               </div>
             </div>
           </div>
@@ -110,12 +194,12 @@ export function PlanDetailPage() {
                 <th>Tháng</th>
                 <th>Gửi thêm</th>
                 <th>Lãi suất thực tế</th>
-                <th>Lãi tháng</th>
+                <th>Lãi nhận trong tháng</th>
                 <th>Tổng tích lũy kế</th>
               </tr>
             </thead>
             <tbody>
-              {MONTHLY_DATA.map((row, i) => (
+              {monthlyData.map((row, i) => (
                 <tr key={i}>
                   <td>{row.month}</td>
                   <td>{formatCurrency(row.deposit)}</td>
@@ -131,13 +215,15 @@ export function PlanDetailPage() {
         {/* Sidebar */}
         <div className="plan-detail__sidebar">
           <div className="plan-detail__donut-section">
-            <h3 className="plan-detail__donut-title">📊 Phân bổ tài sản</h3>
+            <h3 className="plan-detail__donut-title">📊 Cơ cấu số tiền</h3>
             <div
               className="plan-detail__donut"
               style={{ background: `conic-gradient(${gradientParts.join(", ")})` }}
             >
               <div className="plan-detail__donut-center">
-                <span className="plan-detail__donut-value">997tr</span>
+                <span className="plan-detail__donut-value" style={{ fontSize: "14px" }}>
+                  {formatShortCurrency(totalMaturity)}
+                </span>
               </div>
             </div>
             <div className="plan-detail__donut-legend">
@@ -152,16 +238,16 @@ export function PlanDetailPage() {
           </div>
 
           <div className="plan-detail__schedule">
-            <h4>Lịch đáo hạn</h4>
+            <h4>Lịch đóng tiền hàng tháng</h4>
             <table className="plan-detail__schedule-table">
               <thead>
                 <tr>
                   <th>Tháng</th>
-                  <th>Gửi thêm</th>
+                  <th>Số tiền nộp</th>
                 </tr>
               </thead>
               <tbody>
-                {MONTHLY_DATA.map((row, i) => (
+                {monthlyData.map((row, i) => (
                   <tr key={i}>
                     <td>{row.month}</td>
                     <td>{formatCurrency(row.deposit)}</td>

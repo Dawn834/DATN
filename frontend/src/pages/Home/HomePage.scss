@@ -249,6 +249,36 @@
     }
   }
 
+  .channel-tabs {
+    display: flex;
+    gap: 4px;
+    background: $bg-muted;
+    border-radius: $radius-md;
+    padding: 3px;
+  }
+
+  .channel-tab {
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    background: none;
+    border-radius: $radius-sm;
+    color: $text-muted;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &--active {
+      background: $bg-card;
+      color: $primary-blue;
+      box-shadow: $shadow-sm;
+    }
+
+    &:hover:not(&--active) {
+      color: $text-secondary;
+    }
+  }
+
   &__chart {
     display: flex;
     align-items: flex-end;

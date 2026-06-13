@@ -1,54 +1,58 @@
-import { PLAN_RESULTS, BANKS, formatCurrency } from "@/data/mockData"
+import { formatCurrency } from "@/utils/formatters"
 
-export function PlanResultsSection({ visible }) {
-  if (!visible) return null
+export function PlanResultsSection({ visible, results, planName, targetAmount, onSavePlan }) {
+  if (!visible || !results || results.length === 0) return null
+
+  // Tính toán tiến độ dựa trên phương án tốt nhất (nằm đầu danh sách)
+  const bestOption = results[0]
+  const progressPct = targetAmount > 0 ? Math.min(100, Math.round((bestOption.totalAmount / targetAmount) * 100)) : 0
+  const remaining = Math.max(0, targetAmount - bestOption.totalAmount)
 
   return (
     <section className="plan-results">
       <div className="plan-results__header">
         <div>
           <h3 className="plan-results__title">
-            Phương án cho mục tiêu &quot;Mua xe SH&quot;
+            Phương án cho mục tiêu &quot;{planName}&quot;
           </h3>
           <p className="plan-results__subtitle">
-            {PLAN_RESULTS.length} ngân hàng — tối ưu phân bổ
+            {results.length} ngân hàng được đề xuất so sánh
           </p>
         </div>
       </div>
 
       <div className="plan-results__progress-overview">
         <div className="plan-results__progress-circle">
-          <span className="plan-results__progress-pct">95%</span>
+          <span className="plan-results__progress-pct">{progressPct}%</span>
           <span className="plan-results__progress-label">đạt mục tiêu</span>
         </div>
         <div className="plan-results__progress-detail">
-          <p className="plan-results__progress-note">Thiếu 10 triệu</p>
+          <p className="plan-results__progress-note">
+            {remaining > 0 ? `Còn thiếu ${formatCurrency(remaining)}` : "Đã đạt mục tiêu!"}
+          </p>
           <div className="plan-results__progress-banks">
-            {PLAN_RESULTS.map((p) => {
-              const bank = BANKS.find((b) => b.code === p.bankCode)
-              return (
-                <div key={p.id} className="plan-results__progress-bank">
-                  <span className="plan-results__progress-dot" style={{ background: bank?.color }} />
-                  <span>{p.bankName}</span>
-                  <span className="plan-results__progress-amt">{formatCurrency(p.totalAmount)}</span>
-                </div>
-              )
-            })}
+            {results.map((p) => (
+              <div key={p.id} className="plan-results__progress-bank">
+                <span className="plan-results__progress-dot" style={{ background: p.bankColor || "#333" }} />
+                <span>{p.bankName}</span>
+                <span className="plan-results__progress-amt">{formatCurrency(p.totalAmount)}</span>
+              </div>
+            ))}
           </div>
           <p className="plan-results__progress-hint">
-            Đạt 95% mục tiêu (190 triệu đ). Xem xét tăng vốn ban đầu.
+            Đạt {progressPct}% mục tiêu ({formatCurrency(bestOption.totalAmount)}). 
+            {remaining > 0 ? " Cân nhắc tăng số tiền tích lũy hoặc chọn ngân hàng có lãi suất cao hơn." : ""}
           </p>
         </div>
       </div>
 
       <div className="plan-results__cards">
-        {PLAN_RESULTS.map((plan, idx) => {
-          const bank = BANKS.find((b) => b.code === plan.bankCode)
-          return (
+        {results.map((plan, idx) => (
             <div key={plan.id} className={`plan-results__card ${idx === 0 ? "plan-results__card--best" : ""}`}>
+              {plan.badge && <span className="plan-results__card-badge">{plan.badge}</span>}
               <div className="plan-results__card-header">
                 <div className="plan-results__card-bank">
-                  <div className="plan-results__card-logo" style={{ background: bank?.color || "#333" }}>
+                  <div className="plan-results__card-logo" style={{ background: plan.bankColor || "#333" }}>
                     {plan.bankCode}
                   </div>
                   <div>
@@ -68,7 +72,7 @@ export function PlanResultsSection({ visible }) {
                   <span className="plan-results__card-stat-value">{formatCurrency(plan.totalAmount)}</span>
                 </div>
                 <div>
-                  <span className="plan-results__card-stat-label">Tiền lãi</span>
+                  <span className="plan-results__card-stat-label">Tiền lãi nhận được</span>
                   <span className="plan-results__card-stat-value plan-results__card-stat-value--green">
                     +{formatCurrency(plan.interestEarned)}
                   </span>
@@ -76,16 +80,31 @@ export function PlanResultsSection({ visible }) {
               </div>
 
               <div className="plan-results__card-actions">
-                <button className="plan-results__card-btn plan-results__card-btn--primary">
+                <button 
+                  className="plan-results__card-btn plan-results__card-btn--primary"
+                  onClick={() => onSavePlan(plan)}
+                >
                   Lưu kế hoạch
                 </button>
-                <button className="plan-results__card-btn plan-results__card-btn--outline">
-                  Hỏi AI
+                <button 
+                  className="plan-results__card-btn plan-results__card-btn--outline"
+                  onClick={() => {
+                    if (plan.isDynamic && plan.planDetails) {
+                      const stepText = plan.planDetails.steps
+                        .map((s) => `• Tháng ${s.month || 0}: ${s.note || ''}`)
+                        .join("\n\n");
+                      alert(`Kế hoạch phân bổ chi tiết (Thuật toán DP):\n\n${stepText}`);
+                    } else {
+                      alert(`Lãi suất tại ${plan.bankName} hiện tại là ${plan.rate}%. Hãy hỏi AI chatbot để xem tư vấn thêm!`);
+                    }
+                  }}
+                >
+                  Chi tiết
                 </button>
               </div>
             </div>
           )
-        })}
+        )}
       </div>
     </section>
   )

@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import { TrendingUp, Target, PieChart, LogOut } from "lucide-react"
 import "./Sidebar.scss"
 
@@ -10,6 +10,13 @@ const navItems = [
 
 export function Sidebar() {
   const location = useLocation()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    localStorage.removeItem("datn_token")
+    localStorage.removeItem("datn_current_user")
+    navigate("/login")
+  }
 
   return (
     <aside className="sidebar">
@@ -46,7 +53,7 @@ export function Sidebar() {
       </nav>
 
       <div className="sidebar__bottom">
-        <button className="sidebar__logout">
+        <button className="sidebar__logout" onClick={handleLogout}>
           <LogOut size={18} />
           <span>Đăng xuất</span>
         </button>

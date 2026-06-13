@@ -1,4 +1,5 @@
-import { formatCurrency, GOAL_TYPES } from "@/data/mockData"
+import { formatCurrency } from "@/utils/formatters"
+import { GOAL_TYPES } from "@/constants/planningConstants"
 
 export function PlanSummaryAside({ form }) {
   const target = Number(form.targetAmount) || 0
@@ -15,9 +16,6 @@ export function PlanSummaryAside({ form }) {
 
   return (
     <aside className="plan-aside">
-      <div className="plan-aside__avatar">
-        <div className="plan-aside__avatar-circle">N</div>
-      </div>
       <div className="plan-aside__name">{form.planName || "Kế hoạch của bạn"}</div>
       <div className="plan-aside__goal">{form.goalLabel || "Mục tiêu tiết kiệm"}</div>
 

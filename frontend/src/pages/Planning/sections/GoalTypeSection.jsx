@@ -1,5 +1,5 @@
 import { StepHeader } from "@/components/common/StepHeader"
-import { GOAL_TYPES } from "@/data/mockData"
+import { GOAL_TYPES } from "@/constants/planningConstants"
 
 export function GoalTypeSection({ activeGoal, onGoalChange }) {
   return (

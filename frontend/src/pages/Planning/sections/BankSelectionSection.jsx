@@ -1,16 +1,31 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { StepHeader } from "@/components/common/StepHeader"
-import { BANKS } from "@/data/mockData"
+import { bankService } from "@/services/bankService"
 import { BankSelectorPopup } from "@/components/common/BankSelectorPopup"
 
 export function BankSelectionSection({ selectedBanks, onToggleBank }) {
   const [popupOpen, setPopupOpen] = useState(false)
-  const visibleBanks = BANKS.slice(0, 8)
+  const [banks, setBanks] = useState([])
+
+  // Fetch danh sách ngân hàng từ API
+  useEffect(() => {
+    async function loadBanks() {
+      try {
+        const data = await bankService.getBanks()
+        setBanks(data)
+      } catch (err) {
+        console.error("Lỗi khi tải ngân hàng:", err)
+      }
+    }
+    loadBanks()
+  }, [])
+
+  const visibleBanks = banks.slice(0, 8)
 
   return (
     <section className="bank-selection">
       <StepHeader
-        step={3}
+        step={4}
         title="Ngân hàng ưu tiên"
         subtitle="Sổ chọn tốt có + tự động tìm tốt nhất"
       />
