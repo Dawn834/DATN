@@ -6,6 +6,80 @@ import { bankService } from "./bankService";
 import { apiClient } from "./apiClient";
 
 export const chatbotService = {
+  async sendMessageStream(messageHistory, text, onChunk) {
+    console.log("[Chatbot Service] Initiating stream request to backend:", text);
+
+    const token = localStorage.getItem("datn_token");
+    const endpoint = token ? "/chatbot/stream" : "/chatbot/public/stream";
+    const baseUrl = import.meta.env.VITE_API_URL || "";
+    const url = `${baseUrl}/api/v1${endpoint}`;
+
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ prompt: text }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to initialize stream: ${response.statusText}`);
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let buffer = "";
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        
+        let boundary = buffer.indexOf("\n\n");
+        while (boundary !== -1) {
+          const block = buffer.slice(0, boundary).trim();
+          buffer = buffer.slice(boundary + 2);
+
+          if (block) {
+            const lines = block.split(/\r?\n/);
+            let event = "";
+            let dataStr = "";
+
+            for (const line of lines) {
+              if (line.startsWith("event: ")) {
+                event = line.slice(7).trim();
+              } else if (line.startsWith("data: ")) {
+                dataStr = line.slice(6).trim();
+              }
+            }
+
+            if (event === "chunk" && dataStr) {
+              try {
+                const parsed = JSON.parse(dataStr);
+                if (parsed.chunk) {
+                  onChunk(parsed.chunk);
+                }
+              } catch (e) {
+                console.warn("Failed to parse stream data chunk:", e);
+              }
+            }
+          }
+
+          boundary = buffer.indexOf("\n\n");
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
+  },
+
   async sendMessage(messageHistory, text) {
     console.log("[Chatbot Service] Sending message to backend:", text);
 

@@ -34,16 +34,43 @@ export function ChatbotPopup() {
 
   const processResponse = async (text) => {
     setIsTyping(true)
+    const history = [...messages, { role: "user", content: text }]
+    
+    // Create an empty AI message placeholder to accumulate stream chunks
+    let aiMessage = { role: "ai", content: "" }
+    setMessages((prev) => [...prev, aiMessage])
+
     try {
-      const response = await chatbotService.sendMessage(messages, text)
-      setMessages((prev) => [...prev, response])
+      let isFirstChunk = true
+      await chatbotService.sendMessageStream(history, text, (chunk) => {
+        if (isFirstChunk) {
+          setIsTyping(false)
+          isFirstChunk = false
+        }
+        aiMessage.content += chunk
+        setMessages((prev) => {
+          const updated = [...prev]
+          updated[updated.length - 1] = { ...aiMessage }
+          return updated
+        })
+      })
     } catch (err) {
-      setMessages((prev) => [
-        ...prev,
-        { role: "ai", content: "Xin lỗi, đã có lỗi kết nối xảy ra. Vui lòng thử lại!" },
-      ])
-    } finally {
-      setIsTyping(false)
+      console.warn("[ChatbotPopup] Streaming failed, falling back to static sendMessage:", err)
+      // Remove the empty placeholder message before falling back
+      setMessages((prev) => prev.slice(0, -1))
+      setIsTyping(true)
+
+      try {
+        const response = await chatbotService.sendMessage(history, text)
+        setMessages((prev) => [...prev, response])
+      } catch (fallbackErr) {
+        setMessages((prev) => [
+          ...prev,
+          { role: "ai", content: "Xin lỗi, đã có lỗi kết nối xảy ra. Vui lòng thử lại!" },
+        ])
+      } finally {
+        setIsTyping(false)
+      }
     }
   }
 
