@@ -5,7 +5,7 @@ import { AlertBannerSection } from "./sections/AlertBannerSection"
 import { PlanListSection } from "./sections/PlanListSection"
 import { AssetChartSection } from "./sections/AssetChartSection"
 import { savingPlanService } from "@/services/savingPlanService"
-import { formatShortCurrency } from "@/utils/formatters"
+import { formatCurrency } from "@/utils/formatters"
 import "./ManagementPage.scss"
 
 export function ManagementPage() {
@@ -51,7 +51,7 @@ export function ManagementPage() {
       icon: "💰",
       iconBg: "#EDF2FF",
       label: "Tổng tiền gửi",
-      value: formatShortCurrency(totalDeposit),
+      value: formatCurrency(totalDeposit),
       change: `${plans.length} kế hoạch đang chạy`,
       changeType: "up",
     },
@@ -59,7 +59,7 @@ export function ManagementPage() {
       icon: "📈",
       iconBg: "#F0FDF4",
       label: "Lãi ước tính",
-      value: formatShortCurrency(totalInterest),
+      value: formatCurrency(totalInterest),
       change: `Lãi suất trung bình: ${(plans.reduce((sum, p) => sum + p.rate, 0) / (plans.length || 1)).toFixed(2)}%`,
       changeType: "up",
     },
@@ -67,7 +67,7 @@ export function ManagementPage() {
       icon: "📊",
       iconBg: "#FFF7ED",
       label: "Tổng tài sản",
-      value: formatShortCurrency(totalAssets),
+      value: formatCurrency(totalAssets),
       change: "Bao gồm gốc + lãi dự kiến",
       changeType: "up",
     },

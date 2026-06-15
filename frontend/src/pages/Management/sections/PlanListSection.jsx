@@ -1,5 +1,6 @@
 import { formatCurrency } from "@/utils/formatters"
 import { useNavigate } from "react-router-dom"
+import { GOAL_TYPES } from "@/constants/planningConstants"
 
 export function PlanListSection({ plans, onDeletePlan }) {
   const navigate = useNavigate()
@@ -16,14 +17,13 @@ export function PlanListSection({ plans, onDeletePlan }) {
           </div>
         ) : (
           plans.map((plan) => {
-            // bankColor được lưu trong plan_data khi tạo kế hoạch, fallback nếu không có
-            const bankColor = plan.bankColor || "#333"
+            const goalInfo = GOAL_TYPES.find(g => g.id === plan.goalType) || { icon: "💰" }
             return (
               <div key={plan.id} className="plan-list__card">
                 <div className="plan-list__card-header">
                   <div className="plan-list__card-left">
-                    <div className="plan-list__card-logo" style={{ background: bankColor }}>
-                      {plan.bankCode}
+                    <div className="plan-list__card-logo plan-list__card-logo--goal">
+                      {goalInfo.icon}
                     </div>
                     <div>
                       <div className="plan-list__card-name">{plan.planName}</div>

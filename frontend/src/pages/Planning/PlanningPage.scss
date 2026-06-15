@@ -484,6 +484,28 @@
     }
   }
 
+  &__more-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 1px dashed $primary-blue;
+    border-radius: $radius-md;
+    background: transparent;
+    color: $primary-blue;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    outline: none;
+
+    &:hover {
+      background: $primary-blue-light;
+      border-style: solid;
+    }
+  }
+
   &__checkbox {
     accent-color: $primary-blue;
     width: 16px;

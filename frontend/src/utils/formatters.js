@@ -5,7 +5,7 @@
 
 /** Format số tiền đầy đủ theo chuẩn Việt Nam: 1.000.000 đ */
 export function formatCurrency(amount) {
-  return new Intl.NumberFormat("vi-VN").format(amount) + " đ"
+  return new Intl.NumberFormat("vi-VN").format(amount) + " VND"
 }
 
 /** Format số tiền viết tắt: 1.5 tỷ, 200 triệu, 50K */

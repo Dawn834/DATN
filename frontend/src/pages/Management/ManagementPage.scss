@@ -214,6 +214,11 @@
     font-weight: 700;
     color: #fff;
     flex-shrink: 0;
+
+    &--goal {
+      background: #EDF2FF;
+      font-size: 22px;
+    }
   }
 
   &__card-name {
@@ -365,43 +370,34 @@
     gap: 6px;
   }
 
-  &__donut {
+  &__donut-wrapper {
     width: 180px;
     height: 180px;
-    border-radius: 50%;
     margin: 0 auto $spacing-lg;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    &::before {
-      content: "";
-      position: absolute;
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      background: $bg-card;
-    }
   }
 
-  &__donut-center {
-    position: relative;
-    z-index: 1;
-    text-align: center;
+  &__svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
 
-    &-value {
-      font-size: 26px;
-      font-weight: 800;
-      color: $text-primary;
-      display: block;
-    }
+  &__svg-value {
+    font-size: 18px;
+    font-weight: 800;
+    fill: $text-primary;
+  }
+
+  &__svg-label {
+    font-size: 9px;
+    font-weight: 500;
+    fill: $text-muted;
   }
 
   &__legend {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
   }
 
   &__legend-item {
@@ -410,6 +406,15 @@
     gap: 10px;
     font-size: 13px;
     color: $text-secondary;
+    padding: 4px 8px;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover,
+    &--active {
+      background: #F1F5F9;
+    }
   }
 
   &__legend-dot {
@@ -419,9 +424,18 @@
     flex-shrink: 0;
   }
 
+  &__legend-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   &__legend-pct {
     margin-left: auto;
     font-weight: 600;
     color: $text-primary;
+    flex-shrink: 0;
   }
 }
