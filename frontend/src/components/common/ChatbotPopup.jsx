@@ -32,6 +32,23 @@ export function ChatbotPopup() {
     }
   }, [messages, isTyping, isOpen])
 
+  useEffect(() => {
+    const loadHistory = async () => {
+      const token = localStorage.getItem("datn_token")
+      if (token) {
+        try {
+          const history = await chatbotService.getMessages()
+          if (history && history.length > 0) {
+            setMessages(history)
+          }
+        } catch (e) {
+          console.warn("Lỗi khi tải lịch sử chat:", e)
+        }
+      }
+    }
+    loadHistory()
+  }, [])
+
   const processResponse = async (text) => {
     setIsTyping(true)
     const history = [...messages, { role: "user", content: text }]

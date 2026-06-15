@@ -182,4 +182,21 @@ export const chatbotService = {
       content: `Chào bạn! Tôi có thể giúp bạn:\n- Tra cứu xem ngân hàng nào lãi suất cao nhất (Ví dụ: gõ *"lãi suất cao nhất"*).\n- Tra cứu lãi suất theo kỳ hạn gửi (Ví dụ: gõ *"kỳ hạn 12 tháng"*).\n- Tư vấn nên chọn ngân hàng nào để gửi tiền an toàn hoặc tối ưu lãi suất.\n\nBạn cần tôi giải đáp thông tin nào trong số các mục trên?`,
     };
   },
+
+  async getMessages() {
+    const token = localStorage.getItem("datn_token");
+    if (!token) return [];
+    try {
+      const res = await apiClient.get("/chatbot/messages?limit=30");
+      if (res?.data && Array.isArray(res.data)) {
+        return res.data.map(msg => ({
+          role: msg.role === "assistant" ? "ai" : "user",
+          content: msg.content,
+        }));
+      }
+    } catch (err) {
+      console.warn("[Chatbot Service] Failed to load chat history:", err);
+    }
+    return [];
+  },
 };
