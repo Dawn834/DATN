@@ -29,7 +29,7 @@
 
   &__body {
     display: grid;
-    grid-template-columns: 1fr 300px;
+    grid-template-columns: 1fr 420px;
     gap: $spacing-lg;
     align-items: start;
   }
@@ -38,6 +38,14 @@
     display: flex;
     flex-direction: column;
     gap: $spacing-lg;
+  }
+
+  &__sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+    position: sticky;
+    top: 88px;
   }
 }
 
@@ -507,8 +515,6 @@
   border-radius: $radius-lg;
   padding: $spacing-lg;
   box-shadow: $shadow-card;
-  position: sticky;
-  top: 88px;
   text-align: center;
 
   &__avatar-circle {
@@ -608,8 +614,6 @@
   border-radius: $radius-lg;
   padding: $spacing-lg;
   box-shadow: $shadow-card;
-  margin-top: $spacing-lg;
-  grid-column: 1 / -1;
 
   &__header {
     margin-bottom: $spacing-lg;
@@ -629,12 +633,14 @@
 
   &__progress-overview {
     display: flex;
-    gap: $spacing-xl;
+    flex-direction: column;
+    gap: 16px;
     align-items: center;
     padding: $spacing-lg;
     background: $bg-muted;
     border-radius: $radius-lg;
     margin-bottom: $spacing-lg;
+    text-align: center;
   }
 
   &__progress-circle {
@@ -676,6 +682,8 @@
 
   &__progress-detail {
     flex: 1;
+    width: 100%;
+    text-align: left;
   }
 
   &__progress-note {
@@ -710,6 +718,7 @@
     margin-left: auto;
     font-weight: 600;
     color: $text-primary;
+    white-space: nowrap;
   }
 
   &__progress-hint {
@@ -721,7 +730,7 @@
   &__cards {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 16px;
   }
 
   &__card {
@@ -752,42 +761,44 @@
     }
 
     &-logo {
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       border-radius: $radius-sm;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       color: #fff;
     }
 
     &-name {
-      font-size: 15px;
-      font-weight: 700;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.35;
       color: $text-primary;
     }
 
     &-term {
-      font-size: 12px;
+      font-size: 11px;
       color: $text-muted;
     }
 
     &-rate-value {
-      font-size: 24px;
-      font-weight: 800;
+      font-size: 18px;
+      font-weight: 700;
       color: $primary-blue;
     }
 
     &-rate-label {
-      font-size: 12px;
+      font-size: 11px;
       color: $text-muted;
     }
 
     &-stats {
       display: flex;
-      gap: $spacing-xl;
+      justify-content: space-between;
+      gap: 8px;
       margin-bottom: 14px;
       padding-bottom: 14px;
       border-bottom: 1px solid $border-light;
@@ -800,12 +811,12 @@
     }
 
     &-stat-label {
-      font-size: 12px;
+      font-size: 11px;
       color: $text-muted;
     }
 
     &-stat-value {
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 700;
       color: $text-primary;
 

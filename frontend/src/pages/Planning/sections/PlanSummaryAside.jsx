@@ -33,12 +33,12 @@ export function PlanSummaryAside({ form }) {
 
       <div className="plan-aside__divider" />
 
-      <div className="plan-aside__row plan-aside__row--total">
+      {/* <div className="plan-aside__row plan-aside__row--total">
         <span className="plan-aside__row-label">Tổng tiền gửi</span>
         <span className="plan-aside__row-value plan-aside__row-value--bold">
           {formatCurrency(totalMaturity)}
         </span>
-      </div>
+      </div> */}
 
       <div className="plan-aside__info-box">
         <div className="plan-aside__info-label">Điền thông tin để nhận đề xuất</div>

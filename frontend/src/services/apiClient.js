@@ -4,6 +4,8 @@
  */
 
 const SIMULATED_LATENCY = 100; // ms (có thể đặt = 0 khi production)
+const BASE_URL = import.meta.env.VITE_API_URL || "";
+//Định nghĩa biến môi trường VITE_API_URL để gọi endpoint sản phẩm trên Render thay vì fix cứng local proxy.
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -44,19 +46,12 @@ export const apiClient = {
     if (url.startsWith("/auth/me")) {
       finalUrl = "/users/me";
     } else if (url === "/saving-plan") {
-      const userStr = localStorage.getItem("datn_current_user");
-      const user = userStr ? JSON.parse(userStr) : { id: 1 };
-      const userId = user.id || 1;
-      finalUrl = `/saving-plan/${userId}`;
+      finalUrl = "/saving-plan/history";
     } else if (url.match(/^\/saving-plan\/\d+$/)) {
-      const planId = url.split("/").pop();
-      const userStr = localStorage.getItem("datn_current_user");
-      const user = userStr ? JSON.parse(userStr) : { id: 1 };
-      const userId = user.id || 1;
-      finalUrl = `/saving-plan/${userId}/${planId}`;
+      finalUrl = url;
     }
 
-    const response = await fetch(`/api/v1${finalUrl}`, {
+    const response = await fetch(`${BASE_URL}/api/v1${finalUrl}`, {
       headers,
     });
     let data = await checkResponse(response);
@@ -102,7 +97,7 @@ export const apiClient = {
       params.append("username", body.username === "admin" ? "admin@gmail.com" : body.username || "");
       params.append("password", body.password || "");
 
-      const response = await fetch(`/api/v1/auth/login`, {
+      const response = await fetch(`${BASE_URL}/api/v1/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -127,10 +122,7 @@ export const apiClient = {
 
     // Transform saving plan creation to backend API schema
     if (url === "/saving-plan") {
-      const userStr = localStorage.getItem("datn_current_user");
-      const user = userStr ? JSON.parse(userStr) : { id: 1 };
-      const userId = user.id || 1;
-      finalUrl = `/saving-plan/${userId}/save`;
+      finalUrl = "/saving-plan/save";
       finalBody = {
         name: body.planName,
         duration_month: body.term,
@@ -142,7 +134,7 @@ export const apiClient = {
       };
     }
 
-    const response = await fetch(`/api/v1${finalUrl}`, {
+    const response = await fetch(`${BASE_URL}/api/v1${finalUrl}`, {
       method: "POST",
       headers,
       body: JSON.stringify(finalBody),
@@ -174,7 +166,7 @@ export const apiClient = {
       headers["Authorization"] = `Bearer ${token}`;
     }
 
-    const response = await fetch(`/api/v1${url}`, {
+    const response = await fetch(`${BASE_URL}/api/v1${url}`, {
       method: "PUT",
       headers,
       body: JSON.stringify(body),
@@ -199,14 +191,10 @@ export const apiClient = {
     }
 
     if (url.startsWith("/saving-plan")) {
-      const id = url.split("/").pop();
-      const userStr = localStorage.getItem("datn_current_user");
-      const user = userStr ? JSON.parse(userStr) : { id: 1 };
-      const userId = user.id || 1;
-      finalUrl = `/saving-plan/${userId}/${id}`;
+      finalUrl = url;
     }
 
-    const response = await fetch(`/api/v1${finalUrl}`, {
+    const response = await fetch(`${BASE_URL}/api/v1${finalUrl}`, {
       method: "DELETE",
       headers,
     });

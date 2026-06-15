@@ -65,20 +65,30 @@ export function PlanningPage() {
 
         const optimizeResult = await savingPlanService.optimizePlan(payload)
 
-        if (optimizeResult && optimizeResult.top_plans) {
-          const formatted = optimizeResult.top_plans.map((plan, index) => ({
-            id: `dynamic_${plan.rank || index}`,
-            bankCode: "DYNAMIC",
-            bankName: `Tối ưu Động (${plan.banks_used?.join(", ") || "Đa ngân hàng"})`,
-            bankColor: "#3B5BDB",
-            rate: parseFloat(plan.interest_rate_effective_pct?.toFixed(2) || 0),
-            term: termMonths,
-            totalAmount: Math.round(plan.final_amount),
-            interestEarned: Math.round(plan.interest_earned),
-            badge: index === 0 ? "Tối ưu nhất (Lãi suất động)" : "",
-            isDynamic: true,
-            planDetails: plan,
-          }))
+        const topPlans = optimizeResult?.top_plans ||
+          optimizeResult?.plan_details?.top_plans ||
+          (optimizeResult?.plan_details?.best_plan ? [optimizeResult.plan_details.best_plan] : []);
+
+        if (optimizeResult && topPlans.length > 0) {
+          const formatted = topPlans.map((plan, index) => {
+            const steps = plan.steps || []
+            const uniqueCodes = Array.from(new Set(steps.map(s => s.bank_id).filter(Boolean))).map(c => c.toUpperCase())
+            const displayCodes = uniqueCodes.length > 0 ? uniqueCodes.join(", ") : "Đa ngân hàng"
+
+            return {
+              id: `dynamic_${plan.rank || index}`,
+              bankCode: "DYNAMIC",
+              bankName: `Phương án ${index + 1} (${displayCodes})`,
+              bankColor: "#3B5BDB",
+              rate: parseFloat(plan.interest_rate_effective_pct?.toFixed(2) || 0),
+              term: termMonths,
+              totalAmount: Math.round(plan.final_amount || 0),
+              interestEarned: Math.round(plan.interest_earned || 0),
+              // badge: index === 0 ? "Tối ưu nhất" : "",
+              isDynamic: true,
+              planDetails: plan,
+            }
+          })
           setResults(formatted)
         } else {
           setResults([])
@@ -98,7 +108,7 @@ export function PlanningPage() {
           const formatted = [{
             id: fixedResult.bank_code,
             bankCode: fixedResult.bank_code,
-            bankName: fixedResult.bank_name,
+            bankName: fixedResult.bank_code ? fixedResult.bank_code.toUpperCase() : fixedResult.bank_name,
             bankColor: bank ? bank.color : "#1A73E8",
             rate: fixedResult.annual_rate_pct,
             term: fixedResult.term_month,
@@ -126,7 +136,7 @@ export function PlanningPage() {
     try {
       const now = new Date()
       const startDateStr = `${String(now.getDate()).padStart(2, "0")}/${String(now.getMonth() + 1).padStart(2, "0")}/${now.getFullYear()}`
-      
+
       const endDate = new Date(now.setMonth(now.getMonth() + selectedResult.term))
       const endDateStr = `${String(endDate.getDate()).padStart(2, "0")}/${String(endDate.getMonth() + 1).padStart(2, "0")}/${endDate.getFullYear()}`
 
@@ -187,16 +197,18 @@ export function PlanningPage() {
           </button>
         </div>
 
-        <PlanSummaryAside form={form} />
-      </div>
+        <div className="planning-page__sidebar">
+          <PlanSummaryAside form={form} />
 
-      <PlanResultsSection
-        visible={showResults}
-        results={results}
-        planName={form.planName}
-        targetAmount={parseFloat(form.targetAmount) || 0}
-        onSavePlan={handleSavePlan}
-      />
+          <PlanResultsSection
+            visible={showResults}
+            results={results}
+            planName={form.planName}
+            targetAmount={parseFloat(form.targetAmount) || 0}
+            onSavePlan={handleSavePlan}
+          />
+        </div>
+      </div>
     </div>
   )
 }
