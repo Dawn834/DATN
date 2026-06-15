@@ -5,17 +5,17 @@ import { apiClient } from "../../services/apiClient"
 
 export function SignupPage() {
   const navigate = useNavigate()
-  
+
   // Step: "register" | "otp" | "success"
   const [step, setStep] = useState("register")
-  
+
   // Form values
   const [email, setEmail] = useState("")
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [password, setPassword] = useState("")
   const [otpCode, setOtpCode] = useState("")
-  
+
   // States
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
@@ -42,7 +42,7 @@ export function SignupPage() {
 
       // Đăng ký thành công, chuyển sang bước nhập OTP
       setStep("otp")
-      setSuccessMsg(`Mã OTP đã được gửi đến email ${email}. Vui lòng kiểm tra log Terminal của Backend hoặc hòm thư để nhận mã OTP.`)
+      setSuccessMsg(`Mã OTP đã được gửi đến email ${email}. Vui lòng kiểm tra hòm thư để nhận mã OTP.`)
     } catch (err) {
       console.error("Register Error:", err)
       setError(err?.message || "Đăng ký không thành công. Email này có thể đã được sử dụng.")
@@ -70,7 +70,7 @@ export function SignupPage() {
       // Xác thực thành công
       setStep("success")
       setSuccessMsg("Tài khoản của bạn đã được kích hoạt thành công!")
-      
+
       // Tự động redirect về login sau 3 giây
       setTimeout(() => {
         navigate("/login")
@@ -78,6 +78,28 @@ export function SignupPage() {
     } catch (err) {
       console.error("OTP Verification Error:", err)
       setError(err?.message || "Mã OTP không chính xác hoặc đã hết hạn.")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Handle Step 2.5: Resend OTP
+  const handleResendOtp = async () => {
+    setIsLoading(true)
+    setError("")
+    setSuccessMsg("")
+
+    try {
+      await apiClient.post("/auth/register/user", {
+        email,
+        first_name: firstName,
+        last_name: lastName,
+        password,
+      })
+      setSuccessMsg("Mã OTP mới đã được gửi lại vào email của bạn.")
+    } catch (err) {
+      console.error("Resend OTP error:", err)
+      setError(err?.message || "Không thể gửi lại mã OTP. Vui lòng thử lại.")
     } finally {
       setIsLoading(false)
     }
@@ -92,16 +114,16 @@ export function SignupPage() {
       {/* Card Wrapper */}
       <div className="w-full max-w-md px-6 py-8 mx-4 z-10">
         <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-8 shadow-2xl shadow-black/40">
-          
+
           {/* Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center p-3 bg-gradient-to-tr from-blue-600 to-violet-600 rounded-xl mb-4 shadow-lg shadow-blue-500/20">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M12 6v6l4 2"/>
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 6v6l4 2" />
               </svg>
             </div>
-            
+
             {step === "register" && (
               <>
                 <h1 className="text-2xl font-bold text-white tracking-tight">Tạo tài khoản mới</h1>
@@ -141,7 +163,7 @@ export function SignupPage() {
           {/* Step 1: Registration Form */}
           {step === "register" && (
             <form onSubmit={handleRegisterSubmit} className="space-y-4">
-              
+
               {/* Names (Grid) */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
@@ -223,9 +245,9 @@ export function SignupPage() {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Tối thiểu 6 ký tự"
+                    placeholder="Tối thiểu 8 ký tự, có chữ hoa, thường"
                     required
-                    minLength={6}
+                    minLength={8}
                     disabled={isLoading}
                     className="w-full pl-9 pr-3 py-2.5 bg-slate-950/50 border border-slate-800/80 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all disabled:opacity-50"
                   />
@@ -280,6 +302,17 @@ export function SignupPage() {
                 <p className="text-slate-500 text-xs mt-2">
                   *Mã OTP có giá trị trong vòng 5 phút
                 </p>
+                <div className="mt-3">
+                  <span className="text-slate-400 text-xs">Không nhận được mã? </span>
+                  <button
+                    type="button"
+                    onClick={handleResendOtp}
+                    disabled={isLoading}
+                    className="text-xs font-semibold text-blue-400 hover:text-blue-300 disabled:opacity-50 transition-colors bg-none border-none p-0 inline cursor-pointer"
+                  >
+                    Gửi lại mã OTP
+                  </button>
+                </div>
               </div>
 
               <div className="flex gap-3 mt-4">

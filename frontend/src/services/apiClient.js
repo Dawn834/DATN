@@ -21,7 +21,53 @@ async function checkResponse(response, isLogin = false) {
         window.location.reload();
       }
     }
-    throw new Error("Network response was not ok");
+    let errorMsg = "Network response was not ok";
+    try {
+      const errData = await response.json();
+      if (errData && errData.detail) {
+        if (typeof errData.detail === "string") {
+          errorMsg = errData.detail;
+        } else if (Array.isArray(errData.detail)) {
+          errorMsg = errData.detail
+            .map((err) => {
+              const field = err.loc ? err.loc[err.loc.length - 1] : "";
+              let fieldName = field;
+              if (field === "password") fieldName = "Mật khẩu";
+              else if (field === "email") fieldName = "Email";
+              else if (field === "first_name") fieldName = "Tên";
+              else if (field === "last_name") fieldName = "Họ";
+
+              if (err.type === "string_too_short") {
+                const minLen = err.ctx?.min_length || 8;
+                return `${fieldName} phải có tối thiểu ${minLen} ký tự.`;
+              }
+              if (err.type === "value_error") {
+                let msg = err.msg || "";
+                if (msg.includes("at least one uppercase letter")) {
+                  return "Mật khẩu phải chứa ít nhất một chữ cái viết hoa.";
+                }
+                if (msg.includes("at least one lowercase letter")) {
+                  return "Mật khẩu phải chứa ít nhất một chữ cái viết thường.";
+                }
+                if (msg.includes("at least one digit") || msg.includes("must contain a number")) {
+                  return "Mật khẩu phải chứa ít nhất một chữ số.";
+                }
+                return msg.replace("Value error, ", "");
+              }
+              return err.msg || "Thông tin không hợp lệ";
+            })
+            .join(" ");
+        } else {
+          errorMsg = JSON.stringify(errData.detail);
+        }
+      }
+    } catch (e) {
+      // Ignore parse failure if body is empty or not JSON
+    }
+    throw new Error(errorMsg);
+  }
+  if (response.status === 204) {
+    return {};
   }
   return response.json();
 }

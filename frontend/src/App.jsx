@@ -6,6 +6,8 @@ import { ManagementPage } from "./pages/Management"
 import { PlanDetailPage } from "./pages/PlanDetail"
 import { LoginPage } from "./pages/Login/LoginPage"
 import { SignupPage } from "./pages/Signup/SignupPage"
+import { ForgotPasswordPage } from "./pages/ForgotPassword/ForgotPasswordPage"
+import { SettingsPage } from "./pages/Settings/SettingsPage"
 import { ProtectedRoute } from "./components/common/ProtectedRoute"
 
 function App() {
@@ -15,6 +17,7 @@ function App() {
         {/* Public Routes without Sidebar/Header Layout */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
         {/* Routes with MainLayout (Sidebar, Header, etc.) */}
         <Route path="/" element={<MainLayout />}>
@@ -26,6 +29,7 @@ function App() {
             <Route path="planning" element={<PlanningPage />} />
             <Route path="management" element={<ManagementPage />} />
             <Route path="management/plan/:planId" element={<PlanDetailPage />} />
+            <Route path="settings" element={<SettingsPage />} />
           </Route>
         </Route>
       </Routes>

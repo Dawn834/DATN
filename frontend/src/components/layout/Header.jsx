@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { Search, Bell } from "lucide-react"
+import { Search, Bell, Settings, LogOut } from "lucide-react"
 import { apiClient } from "../../services/apiClient"
 import "./Header.scss"
 
@@ -15,6 +15,24 @@ export function Header() {
   const [results, setResults] = useState([])
   const [showResults, setShowResults] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [showDropdown, setShowDropdown] = useState(false)
+
+  const handleLogout = () => {
+    localStorage.removeItem("datn_token")
+    localStorage.removeItem("datn_current_user")
+    navigate("/login")
+  }
+
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutsideDropdown = (e) => {
+      if (!e.target.closest(".header__user")) {
+        setShowDropdown(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutsideDropdown)
+    return () => document.removeEventListener("mousedown", handleClickOutsideDropdown)
+  }, [])
 
   useEffect(() => {
     const token = localStorage.getItem("datn_token")
@@ -152,11 +170,42 @@ export function Header() {
           <span className="header__notification-dot" />
         </button>
 
-        <div className="header__user">
+        <div className="header__user" onClick={() => setShowDropdown(!showDropdown)}>
           <div className="header__user-avatar">{getAvatarLetter()}</div>
           <div className="header__user-info">
             <div className="header__user-name">{getDisplayName()}</div>
           </div>
+          {showDropdown && (
+            <div className="header__user-dropdown" onClick={(e) => e.stopPropagation()}>
+              <div className="header__dropdown-header">
+                <span className="header__dropdown-name">{getDisplayName()}</span>
+                <span className="header__dropdown-email">{user?.email || "Chưa cập nhật email"}</span>
+              </div>
+              <div className="header__dropdown-divider" />
+              <button 
+                className="header__dropdown-item" 
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setShowDropdown(false)
+                  navigate("/settings")
+                }}
+              >
+                <Settings size={15} />
+                <span>Cài đặt tài khoản</span>
+              </button>
+              <button 
+                className="header__dropdown-item header__dropdown-item--logout" 
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setShowDropdown(false)
+                  handleLogout()
+                }}
+              >
+                <LogOut size={15} />
+                <span>Đăng xuất</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </header>

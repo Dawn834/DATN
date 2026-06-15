@@ -1,0 +1,428 @@
+@use '../../styles/variables' as *;
+
+.settings-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+
+  &__header {
+    margin-bottom: $spacing-xl;
+  }
+
+  &__title {
+    font-size: 24px;
+    font-weight: 700;
+    color: $text-primary;
+    margin: 0 0 4px;
+  }
+
+  &__subtitle {
+    font-size: 14px;
+    color: $text-secondary;
+    margin: 0;
+  }
+
+  &__alert {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border-radius: $radius-lg;
+    margin-bottom: $spacing-lg;
+    font-size: 14px;
+    line-height: 1.4;
+
+    &--success {
+      background: $accent-green-light;
+      border: 1px solid rgba($accent-green, 0.2);
+      color: darken($accent-green, 10%);
+    }
+
+    &--error {
+      background: $accent-red-light;
+      border: 1px solid rgba($accent-red, 0.2);
+      color: darken($accent-red, 10%);
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: $spacing-xl;
+    align-items: start;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__card {
+    background: $bg-card;
+    border: 1px solid $border-color;
+    border-radius: $radius-xl;
+    padding: $spacing-xl;
+    box-shadow: $shadow-card;
+    display: flex;
+    flex-direction: column;
+
+    &--profile {
+      align-items: center;
+      text-align: center;
+    }
+
+    &-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: $text-primary;
+      margin: 0 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      svg {
+        color: $primary-blue;
+      }
+    }
+
+    &-desc {
+      font-size: 13px;
+      color: $text-secondary;
+      margin: 0 0 $spacing-xl;
+      line-height: 1.5;
+    }
+  }
+
+  // Profile Specific styling
+  &__profile {
+    &-hero {
+      margin-bottom: $spacing-xl;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    &-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, $accent-orange, $accent-orange-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 32px;
+      box-shadow: 0 8px 16px rgba($accent-orange, 0.15);
+      margin-bottom: $spacing-md;
+    }
+
+    &-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: $text-primary;
+      margin: 0 0 6px;
+    }
+
+    &-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: $radius-full;
+      background: $primary-blue-light;
+      color: $primary-blue;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    &-details {
+      width: 100%;
+      border-top: 1px solid $border-light;
+      padding-top: $spacing-xl;
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-md;
+    }
+  }
+
+  &__detail {
+    &-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+    }
+
+    &-icon {
+      color: $text-secondary;
+      flex-shrink: 0;
+    }
+
+    &-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    &-label {
+      font-size: 11px;
+      color: $text-muted;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    &-value {
+      font-size: 13.5px;
+      color: $text-primary;
+      word-break: break-all;
+    }
+  }
+
+  // Security (Change Password Form) styling
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+
+    &-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      label {
+        font-size: 12px;
+        font-weight: 600;
+        color: $text-secondary;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      input {
+        width: 100%;
+        height: 44px;
+        padding: 0 16px;
+        border: 1px solid $border-color;
+        border-radius: $radius-md;
+        font-size: 14px;
+        color: $text-primary;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+
+        &::placeholder {
+          color: $text-muted;
+        }
+
+        &:focus {
+          border-color: $primary-blue;
+          box-shadow: 0 0 0 3px rgba($primary-blue, 0.1);
+        }
+
+        &:disabled {
+          background: $bg-muted;
+          cursor: not-allowed;
+          opacity: 0.7;
+        }
+      }
+    }
+  }
+
+  &__btn {
+    height: 44px;
+    background: $primary-blue;
+    color: #fff;
+    border: none;
+    border-radius: $radius-md;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: $spacing-md;
+    box-shadow: 0 4px 12px rgba($primary-blue, 0.15);
+
+    &:hover:not(:disabled) {
+      background: $primary-blue-hover;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba($primary-blue, 0.2);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  }
+
+  // OTP Modal Styling
+  &__modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: $spacing-lg;
+    animation: overlayFadeIn 0.2s ease-out;
+  }
+
+  &__modal {
+    background: $bg-card;
+    border: 1px solid $border-color;
+    border-radius: $radius-xl;
+    max-width: 440px;
+    width: 100%;
+    padding: $spacing-xl;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    animation: modalSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    &-header {
+      text-align: center;
+      margin-bottom: $spacing-xl;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      h3 {
+        font-size: 20px;
+        font-weight: 700;
+        color: $text-primary;
+        margin: 12px 0 6px;
+      }
+
+      p {
+        font-size: 13.5px;
+        color: $text-secondary;
+        line-height: 1.5;
+        margin: 0;
+
+        strong {
+          color: $text-primary;
+        }
+      }
+    }
+
+    &-icon {
+      color: $primary-blue;
+    }
+
+    &-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: $spacing-xl;
+    }
+
+    &-actions {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+    }
+
+    &-btn {
+      flex: 1;
+      height: 42px;
+      border-radius: $radius-md;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      &--cancel {
+        background: #fff;
+        border: 1px solid $border-color;
+        color: $text-secondary;
+
+        &:hover:not(:disabled) {
+          background: $bg-muted;
+          border-color: darken($border-color, 10%);
+        }
+      }
+
+      &--confirm {
+        background: $primary-blue;
+        border: none;
+        color: #fff;
+
+        &:hover:not(:disabled) {
+          background: $primary-blue-hover;
+        }
+      }
+
+      &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  &__otp-input {
+    width: 220px;
+    height: 48px;
+    border: 1px solid $border-color;
+    border-radius: $radius-md;
+    background: $bg-muted;
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0.4em;
+    padding-left: 0.4em; // offset letter spacing center
+    outline: none;
+    color: $text-primary;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:focus {
+      border-color: $primary-blue;
+      box-shadow: 0 0 0 3px rgba($primary-blue, 0.1);
+      background: #fff;
+    }
+
+    &::placeholder {
+      letter-spacing: normal;
+      padding-left: 0;
+      font-size: 16px;
+      font-weight: 400;
+      color: $text-muted;
+    }
+  }
+}
+
+// Keyframe Animations
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// Shake animation for error validation
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}

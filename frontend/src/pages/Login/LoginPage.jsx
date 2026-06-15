@@ -104,6 +104,12 @@ export function LoginPage() {
                 <label htmlFor="password" className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
                   Mật khẩu
                 </label>
+                <Link
+                  to="/forgot-password"
+                  className="text-xs font-medium text-blue-400 hover:text-blue-300 transition-colors duration-150"
+                >
+                  Quên mật khẩu?
+                </Link>
               </div>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-500 transition-colors duration-200">

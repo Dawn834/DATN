@@ -1,11 +1,12 @@
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { TrendingUp, Target, PieChart, LogOut, LogIn } from "lucide-react"
+import { TrendingUp, Target, PieChart, Settings, LogOut, LogIn } from "lucide-react"
 import "./Sidebar.scss"
 
 const navItems = [
   { title: "Lãi suất ngân hàng", icon: TrendingUp, path: "/" },
   { title: "Lập kế hoạch mục tiêu", icon: Target, path: "/planning" },
   { title: "Quản lý tài chính", icon: PieChart, path: "/management" },
+  { title: "Cài đặt tài khoản", icon: Settings, path: "/settings" },
 ]
 
 export function Sidebar() {
