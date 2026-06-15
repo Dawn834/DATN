@@ -35,29 +35,30 @@ export function ChatbotPopup() {
   const processResponse = async (text) => {
     setIsTyping(true)
     const history = [...messages, { role: "user", content: text }]
-    
-    // Create an empty AI message placeholder to accumulate stream chunks
-    let aiMessage = { role: "ai", content: "" }
-    setMessages((prev) => [...prev, aiMessage])
 
     try {
       let isFirstChunk = true
+      let accumulatedContent = ""
+
       await chatbotService.sendMessageStream(history, text, (chunk) => {
+        accumulatedContent += chunk
+
         if (isFirstChunk) {
           setIsTyping(false)
           isFirstChunk = false
+          // Append the new AI message containing the first chunk
+          setMessages((prev) => [...prev, { role: "ai", content: accumulatedContent }])
+        } else {
+          // Update the content of the existing AI message
+          setMessages((prev) => {
+            const updated = [...prev]
+            updated[updated.length - 1] = { role: "ai", content: accumulatedContent }
+            return updated
+          })
         }
-        aiMessage.content += chunk
-        setMessages((prev) => {
-          const updated = [...prev]
-          updated[updated.length - 1] = { ...aiMessage }
-          return updated
-        })
       })
     } catch (err) {
       console.warn("[ChatbotPopup] Streaming failed, falling back to static sendMessage:", err)
-      // Remove the empty placeholder message before falling back
-      setMessages((prev) => prev.slice(0, -1))
       setIsTyping(true)
 
       try {
