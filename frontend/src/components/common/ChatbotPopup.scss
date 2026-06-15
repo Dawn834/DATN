@@ -94,6 +94,31 @@
     }
   }
 
+  &__header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__clear {
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: none;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    color: $text-muted;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+
+    &:hover {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+  }
+
   &__close {
     width: 30px;
     height: 30px;
@@ -230,6 +255,21 @@
 
     &:hover {
       background: $primary-blue-hover;
+    }
+  }
+
+  &__paragraph {
+    margin: 0;
+    &:not(:last-child) {
+      margin-bottom: 6px;
+    }
+  }
+
+  &__bullet-item {
+    margin-left: 16px;
+    list-style-type: disc;
+    &:not(:last-child) {
+      margin-bottom: 4px;
     }
   }
 }

@@ -85,7 +85,7 @@ export const chatbotService = {
 
     try {
       const token = localStorage.getItem("datn_token");
-      const endpoint = token ? "/chatbot/stream" : "/chatbot/public";
+      const endpoint = token ? "/chatbot" : "/chatbot/public";
       const res = await apiClient.post(endpoint, { prompt: text });
 
       if (res?.data && res.data.answer) {
@@ -198,5 +198,17 @@ export const chatbotService = {
       console.warn("[Chatbot Service] Failed to load chat history:", err);
     }
     return [];
+  },
+
+  async clearMessages() {
+    const token = localStorage.getItem("datn_token");
+    if (!token) return false;
+    try {
+      await apiClient.delete("/chatbot/messages");
+      return true;
+    } catch (err) {
+      console.warn("[Chatbot Service] Failed to clear chat history:", err);
+    }
+    return false;
   },
 };

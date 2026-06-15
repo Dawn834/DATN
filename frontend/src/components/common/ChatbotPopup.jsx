@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react"
-import { MessageCircle, X, Send } from "lucide-react"
+import { MessageCircle, X, Send, Trash2 } from "lucide-react"
 import { chatbotService } from "@/services/chatbotService"
 import "./ChatbotPopup.scss"
 
@@ -33,28 +33,38 @@ export function ChatbotPopup() {
   }, [messages, isTyping, isOpen])
 
   useEffect(() => {
-    const loadHistory = async () => {
-      const token = localStorage.getItem("datn_token")
-      if (token) {
-        try {
-          const history = await chatbotService.getMessages()
-          if (history && history.length > 0) {
-            setMessages(history)
+    if (isOpen) {
+      const loadHistory = async () => {
+        const token = localStorage.getItem("datn_token")
+        if (token) {
+          try {
+            const history = await chatbotService.getMessages()
+            if (history && history.length > 0) {
+              setMessages(history)
+              return
+            }
+          } catch (e) {
+            console.warn("Lỗi khi tải lịch sử chat:", e)
           }
-        } catch (e) {
-          console.warn("Lỗi khi tải lịch sử chat:", e)
         }
+        // Reset to default greeting if no token or no history
+        setMessages([
+          {
+            role: "ai",
+            content: "Xin chào! Tôi hỗ trợ tư vấn lãi suất, so sánh phương án tiết kiệm và giải thích kết quả. Bạn cần hỗ trợ gì?",
+          },
+        ])
       }
+      loadHistory()
     }
-    loadHistory()
-  }, [])
+  }, [isOpen])
 
   const processResponse = async (text) => {
     setIsTyping(true)
     const history = [...messages, { role: "user", content: text }]
 
+    let isFirstChunk = true
     try {
-      let isFirstChunk = true
       let accumulatedContent = ""
 
       await chatbotService.sendMessageStream(history, text, (chunk) => {
@@ -76,17 +86,22 @@ export function ChatbotPopup() {
       })
     } catch (err) {
       console.warn("[ChatbotPopup] Streaming failed, falling back to static sendMessage:", err)
-      setIsTyping(true)
-
-      try {
-        const response = await chatbotService.sendMessage(history, text)
-        setMessages((prev) => [...prev, response])
-      } catch (fallbackErr) {
-        setMessages((prev) => [
-          ...prev,
-          { role: "ai", content: "Xin lỗi, đã có lỗi kết nối xảy ra. Vui lòng thử lại!" },
-        ])
-      } finally {
+      
+      // Only fallback to sendMessage if we haven't rendered any chunks yet!
+      if (isFirstChunk) {
+        setIsTyping(true)
+        try {
+          const response = await chatbotService.sendMessage(history, text)
+          setMessages((prev) => [...prev, response])
+        } catch (fallbackErr) {
+          setMessages((prev) => [
+            ...prev,
+            { role: "ai", content: "Xin lỗi, đã có lỗi kết nối xảy ra. Vui lòng thử lại!" },
+          ])
+        } finally {
+          setIsTyping(false)
+        }
+      } else {
         setIsTyping(false)
       }
     }
@@ -104,6 +119,66 @@ export function ChatbotPopup() {
     if (isTyping) return
     setMessages((prev) => [...prev, { role: "user", content: text }])
     processResponse(text)
+  }
+
+  const handleClearHistory = async () => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa toàn bộ lịch sử chat không?")) {
+      const success = await chatbotService.clearMessages()
+      if (success) {
+        setMessages([
+          {
+            role: "ai",
+            content: "Lịch sử chat đã được xóa. Tôi hỗ trợ tư vấn lãi suất, so sánh phương án tiết kiệm và giải thích kết quả. Bạn cần hỗ trợ gì?",
+          },
+        ])
+      }
+    }
+  }
+
+  const renderMessageContent = (content) => {
+    if (!content) return ""
+    
+    // Split by newlines to preserve paragraphs & list items
+    const lines = content.split('\n')
+    return lines.map((line, idx) => {
+      // Check for bullet list
+      const isBullet = line.trim().startsWith('- ')
+      let text = isBullet ? line.trim().substring(2) : line
+      
+      // Parse bold markdown **text** -> <strong>text</strong>
+      const boldRegex = /\*\*(.*?)\*\*/g
+      const parts = []
+      let lastIndex = 0
+      let match
+      
+      while ((match = boldRegex.exec(text)) !== null) {
+        if (match.index > lastIndex) {
+          parts.push(text.substring(lastIndex, match.index))
+        }
+        parts.push(<strong key={match.index}>{match[1]}</strong>)
+        lastIndex = boldRegex.lastIndex
+      }
+      
+      if (lastIndex < text.length) {
+        parts.push(text.substring(lastIndex))
+      }
+      
+      const contentNodes = parts.length > 0 ? parts : text
+      
+      if (isBullet) {
+        return (
+          <li key={idx} className="chatbot-popup__bullet-item">
+            {contentNodes}
+          </li>
+        )
+      }
+      
+      return (
+        <p key={idx} className="chatbot-popup__paragraph">
+          {contentNodes}
+        </p>
+      )
+    })
   }
 
   return (
@@ -127,9 +202,20 @@ export function ChatbotPopup() {
                 <div className="chatbot-popup__header-sub">Phân tích & tư vấn phương án</div>
               </div>
             </div>
-            <button className="chatbot-popup__close" onClick={() => setIsOpen(false)}>
-              <X size={18} />
-            </button>
+            <div className="chatbot-popup__header-actions">
+              {localStorage.getItem("datn_token") && messages.length > 1 && (
+                <button 
+                  className="chatbot-popup__clear" 
+                  onClick={handleClearHistory}
+                  title="Xóa lịch sử chat"
+                >
+                  <Trash2 size={16} />
+                </button>
+              )}
+              <button className="chatbot-popup__close" onClick={() => setIsOpen(false)}>
+                <X size={18} />
+              </button>
+            </div>
           </div>
 
           <div className="chatbot-popup__quick">
@@ -144,10 +230,12 @@ export function ChatbotPopup() {
             {messages.map((msg, i) => (
               <div key={i} className={`chatbot-popup__msg chatbot-popup__msg--${msg.role}`}>
                 {msg.role === "ai" && <span className="chatbot-popup__msg-avatar">AI</span>}
-                <div className="chatbot-popup__msg-bubble">{msg.content}</div>
+                <div className="chatbot-popup__msg-bubble">
+                  {renderMessageContent(msg.content)}
+                </div>
               </div>
             ))}
-            {isTyping && (
+            {isTyping && messages[messages.length - 1]?.role !== "ai" && (
               <div className="chatbot-popup__msg chatbot-popup__msg--ai">
                 <span className="chatbot-popup__msg-avatar">AI</span>
                 <div className="chatbot-popup__msg-bubble chatbot-popup__msg-bubble--typing">
