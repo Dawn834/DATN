@@ -47,7 +47,7 @@ export const chatbotService = {
           const top = sorted[0];
           return {
             role: "ai",
-            content: `Hiện tại, lãi suất cao nhất cho kỳ hạn **12 tháng** là **${top.rate}%/năm** tại ngân hàng **${top.fullName || top.bankName} (${top.bankCode})**.\n\nNgoài ra, các ngân hàng thương mại cổ phần tư nhân cũng đang có mức lãi suất hấp dẫn. Bạn có thể tra cứu chi tiết trên trang **Tra cứu lãi suất**.`,
+            content: `Hiện tại, lãi suất cao nhất cho kỳ hạn **12 tháng** là **${top.rate}%/năm** tại ngân hàng **${top.bank || "chưa xác định"}**.\n\nNgoài ra, các ngân hàng thương mại cổ phần tư nhân cũng đang có mức lãi suất hấp dẫn. Bạn có thể tra cứu chi tiết trên trang **Tra cứu lãi suất**.`,
           };
         }
       } catch (err) {
@@ -69,7 +69,7 @@ export const chatbotService = {
         if (ratesData && ratesData.length > 0) {
           const sorted = [...ratesData].sort((a, b) => b.rate - a.rate);
           const top3 = sorted.slice(0, 3);
-          const topList = top3.map((item, idx) => `${idx + 1}. **${item.bankName}**: ${item.rate}%/năm`).join("\n");
+          const topList = top3.map((item, idx) => `${idx + 1}. **${item.bank || "Ngân hàng"}**: ${item.rate}%/năm`).join("\n");
 
           return {
             role: "ai",
