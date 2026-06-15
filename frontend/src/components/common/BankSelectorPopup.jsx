@@ -56,27 +56,8 @@ function BankLogo({ bank }) {
   )
 }
 
-export function BankSelectorPopup({ isOpen, onClose, onSelectBank }) {
+export function BankSelectorPopup({ isOpen, onClose, onSelectBank, banks = [] }) {
   const [search, setSearch] = useState("")
-  const [banks, setBanks] = useState([])
-  const [loading, setLoading] = useState(false)
-
-  // Fetch danh sách ngân hàng từ API khi popup mở
-  useEffect(() => {
-    if (!isOpen) return
-    async function loadBanks() {
-      try {
-        setLoading(true)
-        const data = await bankService.getBanks()
-        setBanks(data)
-      } catch (err) {
-        console.error("Lỗi khi tải danh sách ngân hàng:", err)
-      } finally {
-        setLoading(false)
-      }
-    }
-    loadBanks()
-  }, [isOpen])
 
   if (!isOpen) return null
 
@@ -118,25 +99,19 @@ export function BankSelectorPopup({ isOpen, onClose, onSelectBank }) {
         </div>
 
         <div className="bank-popup__grid">
-          {loading ? (
-            <div style={{ textAlign: "center", padding: "20px", color: "#64748B" }}>
-              Đang tải danh sách ngân hàng...
-            </div>
-          ) : (
-            filteredBanks.map((bank) => (
-              <button
-                key={bank.code}
-                className="bank-popup__item"
-                onClick={() => handleSelect(bank)}
-              >
-                <BankLogo bank={bank} />
-                <div className="bank-popup__item-info">
-                  <div className="bank-popup__item-code">{bank.code}</div>
-                  <div className="bank-popup__item-name">{bank.name}</div>
-                </div>
-              </button>
-            ))
-          )}
+          {filteredBanks.map((bank) => (
+            <button
+              key={bank.code}
+              className="bank-popup__item"
+              onClick={() => handleSelect(bank)}
+            >
+              <BankLogo bank={bank} />
+              <div className="bank-popup__item-info">
+                <div className="bank-popup__item-code">{bank.code}</div>
+                <div className="bank-popup__item-name">{bank.name}</div>
+              </div>
+            </button>
+          ))}
         </div>
       </div>
     </div>

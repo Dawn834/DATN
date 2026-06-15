@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react"
 import { StepHeader } from "@/components/common/StepHeader"
 import { bankService } from "@/services/bankService"
+import { BankSelectorPopup } from "@/components/common/BankSelectorPopup"
 
 export function BankSelectionSection({ selectedBanks, onToggleBank, autoOptimize, onToggleAutoOptimize }) {
   const [banks, setBanks] = useState([])
+  const [popupOpen, setPopupOpen] = useState(false)
 
   // Fetch danh sách ngân hàng từ API
   useEffect(() => {
@@ -18,7 +20,21 @@ export function BankSelectionSection({ selectedBanks, onToggleBank, autoOptimize
     loadBanks()
   }, [])
 
-  const visibleBanks = banks.slice(0, 8)
+  const getVisibleBanks = () => {
+    const top8 = banks.slice(0, 8)
+    const selectedNotInTop8 = banks.filter(
+      (b) => selectedBanks.includes(b.code) && !top8.some((t) => t.code === b.code)
+    )
+    return [...top8, ...selectedNotInTop8]
+  }
+
+  const visibleBanks = getVisibleBanks()
+
+  const handleSelectFromPopup = (bank) => {
+    if (!selectedBanks.includes(bank.code)) {
+      onToggleBank(bank.code)
+    }
+  }
 
   return (
     <section className="bank-selection">
@@ -57,23 +73,42 @@ export function BankSelectionSection({ selectedBanks, onToggleBank, autoOptimize
           </div>
         </div>
       ) : (
-        <div className="bank-selection__grid">
-          {visibleBanks.map((bank) => {
-            const isSelected = selectedBanks.includes(bank.code)
-            return (
-              <label key={bank.code} className={`bank-selection__item ${isSelected ? "bank-selection__item--selected" : ""}`}>
-                <input
-                  type="checkbox"
-                  checked={isSelected}
-                  onChange={() => onToggleBank(bank.code)}
-                  className="bank-selection__checkbox"
-                />
-                <span className="bank-selection__dot" style={{ background: bank.color }} />
-                <span className="bank-selection__name">{bank.name}</span>
-              </label>
-            )
-          })}
-        </div>
+        <>
+          <div className="bank-selection__grid">
+            {visibleBanks.map((bank) => {
+              const isSelected = selectedBanks.includes(bank.code)
+              return (
+                <label key={bank.code} className={`bank-selection__item ${isSelected ? "bank-selection__item--selected" : ""}`}>
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => onToggleBank(bank.code)}
+                    className="bank-selection__checkbox"
+                  />
+                  <span className="bank-selection__dot" style={{ background: bank.color }} />
+                  <span className="bank-selection__name">{bank.name}</span>
+                </label>
+              )
+            })}
+
+            {banks.length > 8 && (
+              <button
+                type="button"
+                onClick={() => setPopupOpen(true)}
+                className="bank-selection__more-btn"
+              >
+                <span>Thêm ngân hàng</span>
+              </button>
+            )}
+          </div>
+
+          <BankSelectorPopup
+            isOpen={popupOpen}
+            onClose={() => setPopupOpen(false)}
+            onSelectBank={handleSelectFromPopup}
+            banks={banks}
+          />
+        </>
       )}
     </section>
   )

@@ -16,7 +16,20 @@ export function BankInfoSection({ banks, activeBank, onBankChange }) {
     setSuffixIndex(0)
   }, [activeBank?.code])
 
-  const visibleBanks = (banks || []).slice(0, VISIBLE_COUNT)
+  // Get the list of visible banks (max VISIBLE_COUNT)
+  // If activeBank is not in the top VISIBLE_COUNT, show it at the end (replacing the 5th item)
+  const getVisibleBanks = () => {
+    if (!banks || banks.length === 0) return []
+    const topBanks = banks.slice(0, VISIBLE_COUNT)
+    if (!activeBank) return topBanks
+    
+    const isAlreadyVisible = topBanks.some((b) => b.id === activeBank.id)
+    if (isAlreadyVisible) return topBanks
+    
+    return [...banks.slice(0, VISIBLE_COUNT - 1), activeBank]
+  }
+
+  const visibleBanks = getVisibleBanks()
   const remainingCount = Math.max(0, (banks || []).length - VISIBLE_COUNT)
 
   // Các hậu tố phổ biến của tên file logo ngân hàng
@@ -91,6 +104,7 @@ export function BankInfoSection({ banks, activeBank, onBankChange }) {
         isOpen={popupOpen}
         onClose={() => setPopupOpen(false)}
         onSelectBank={onBankChange}
+        banks={banks}
       />
     </section>
   )

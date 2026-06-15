@@ -154,6 +154,7 @@ export function PlanningPage() {
         startDate: startDateStr,
         endDate: endDateStr,
         estimatedInterest: selectedResult.interestEarned,
+        planDetails: selectedResult.planDetails,
       }
 
       await savingPlanService.createPlan(newPlan)
