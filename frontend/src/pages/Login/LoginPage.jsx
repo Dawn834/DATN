@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, AlertCircle } from "lucide-react"
 import { apiClient } from "../../services/apiClient"
@@ -10,6 +10,14 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+
+  useEffect(() => {
+    const reason = sessionStorage.getItem("logout_reason")
+    if (reason === "expired") {
+      setError("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.")
+      sessionStorage.removeItem("logout_reason")
+    }
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()

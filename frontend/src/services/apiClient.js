@@ -30,6 +30,7 @@ function forceLogout() {
   localStorage.removeItem("datn_token");
   localStorage.removeItem("datn_refresh_token");
   localStorage.removeItem("datn_current_user");
+  sessionStorage.setItem("logout_reason", "expired");
   window.location.reload();
 }
 
@@ -97,42 +98,70 @@ async function checkResponse(response, isLogin = false) {
     let errorMsg = "Network response was not ok";
     try {
       const errData = await response.json();
-      if (errData && errData.detail) {
-        if (typeof errData.detail === "string") {
-          errorMsg = errData.detail;
-        } else if (Array.isArray(errData.detail)) {
-          errorMsg = errData.detail
-            .map((err) => {
-              const field = err.loc ? err.loc[err.loc.length - 1] : "";
-              let fieldName = field;
-              if (field === "password") fieldName = "Mật khẩu";
-              else if (field === "email") fieldName = "Email";
-              else if (field === "first_name") fieldName = "Tên";
-              else if (field === "last_name") fieldName = "Họ";
-
-              if (err.type === "string_too_short") {
-                const minLen = err.ctx?.min_length || 8;
-                return `${fieldName} phải có tối thiểu ${minLen} ký tự.`;
-              }
-              if (err.type === "value_error") {
-                let msg = err.msg || "";
-                if (msg.includes("at least one uppercase letter")) {
-                  return "Mật khẩu phải chứa ít nhất một chữ cái viết hoa.";
-                }
-                if (msg.includes("at least one lowercase letter")) {
-                  return "Mật khẩu phải chứa ít nhất một chữ cái viết thường.";
-                }
-                if (msg.includes("at least one digit") || msg.includes("must contain a number")) {
-                  return "Mật khẩu phải chứa ít nhất một chữ số.";
-                }
-                return msg.replace("Value error, ", "");
-              }
-              return err.msg || "Thông tin không hợp lệ";
-            })
-            .join(" ");
-        } else {
-          errorMsg = JSON.stringify(errData.detail);
+      
+      // Normalize errData. If it has a detail property, use that.
+      let detail = errData;
+      if (errData && errData.detail !== undefined) {
+        detail = errData.detail;
+      }
+      
+      // If detail is a string, check if it's a stringified JSON array/object
+      if (typeof detail === "string") {
+        try {
+          const parsed = JSON.parse(detail);
+          if (Array.isArray(parsed) || typeof parsed === "object") {
+            detail = parsed;
+          }
+        } catch (e) {
+          // Keep it as string
         }
+      }
+      
+      if (typeof detail === "string") {
+        errorMsg = detail;
+        const normalized = errorMsg.toLowerCase();
+        if (normalized.includes("otp code not valid") || normalized.includes("otp code is invalid") || normalized.includes("otp code expired")) {
+          errorMsg = "Mã xác thực (OTP) đã hết hạn hoặc không hợp lệ.";
+        } else if (normalized.includes("incorrect email or password")) {
+          errorMsg = "Mật khẩu hoặc email không chính xác.";
+        } else if (normalized.includes("password change request expired")) {
+          errorMsg = "Yêu cầu đổi mật khẩu đã hết hạn.";
+        } else if (normalized.includes("token has expired")) {
+          errorMsg = "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.";
+        }
+      } else if (Array.isArray(detail)) {
+        errorMsg = detail
+          .map((err) => {
+            const field = err.loc ? err.loc[err.loc.length - 1] : "";
+            let fieldName = field;
+            if (field === "password") fieldName = "Mật khẩu";
+            else if (field === "email") fieldName = "Email";
+            else if (field === "first_name") fieldName = "Tên";
+            else if (field === "last_name") fieldName = "Họ";
+            else if (field === "otp_code") fieldName = "Mã OTP";
+
+            if (err.type === "string_too_short" || err.type?.includes("min_length")) {
+              const minLen = err.ctx?.min_length || 8;
+              return `${fieldName} phải có tối thiểu ${minLen} ký tự.`;
+            }
+            if (err.type === "value_error" || err.type?.includes("value_error")) {
+              let msg = err.msg || "";
+              if (msg.includes("at least one uppercase letter")) {
+                return "Mật khẩu phải chứa ít nhất một chữ cái viết hoa.";
+              }
+              if (msg.includes("at least one lowercase letter")) {
+                return "Mật khẩu phải chứa ít nhất một chữ cái viết thường.";
+              }
+              if (msg.includes("at least one digit") || msg.includes("must contain a number")) {
+                return "Mật khẩu phải chứa ít nhất một chữ số.";
+              }
+              return msg.replace("Value error, ", "");
+            }
+            return err.msg || "Thông tin không hợp lệ";
+          })
+          .join(" ");
+      } else if (detail && typeof detail === "object") {
+        errorMsg = detail.message || JSON.stringify(detail);
       }
     } catch (e) {
       // Ignore parse failure if body is empty or not JSON
