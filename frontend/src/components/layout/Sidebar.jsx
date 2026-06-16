@@ -27,13 +27,13 @@ export function Sidebar() {
       <div className="sidebar__logo">
         <div className="sidebar__logo-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M12 6v6l4 2"/>
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 6v6l4 2" />
           </svg>
         </div>
         <div className="sidebar__logo-content">
-          <span className="sidebar__logo-text">TiếtKiệm</span>
-          <span className="sidebar__logo-sub">SMART SAVING · PRO</span>
+          {/* <span className="sidebar__logo-text">TiếtKiệm</span> */}
+          <span className="sidebar__logo-text">SMART SAVING</span>
         </div>
       </div>
 
