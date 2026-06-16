@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { GOAL_TYPES } from "@/constants/planningConstants"
 import { GoalTypeSection } from "./sections/GoalTypeSection"
@@ -22,6 +22,22 @@ export function PlanningPage() {
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState([])
   const [autoOptimize, setAutoOptimize] = useState(false)
+  const [existingPlans, setExistingPlans] = useState([])
+
+  useEffect(() => {
+    async function fetchExistingPlans() {
+      try {
+        const data = await savingPlanService.getPlans()
+        if (data) {
+          setExistingPlans(data)
+        }
+      } catch (err) {
+        console.error("Failed to load existing plans:", err)
+      }
+    }
+    fetchExistingPlans()
+  }, [])
+
   const [form, setForm] = useState({
     planName: "Mua xe SH",
     targetAmount: "200000000",
@@ -31,6 +47,10 @@ export function PlanningPage() {
     goalLabel: GOAL_TYPES.find((g) => g.id === "car")?.label || "",
     rateType: "fixed",
   })
+
+  const isDuplicateName = existingPlans.some(
+    (p) => p.planName?.trim().toLowerCase() === form.planName?.trim().toLowerCase()
+  )
 
   const handleGoalChange = (goalId) => {
     setActiveGoal(goalId)
@@ -47,6 +67,10 @@ export function PlanningPage() {
   }
 
   const handleCalculate = async () => {
+    if (isDuplicateName) {
+      showToast("Tên kế hoạch đã trùng với kế hoạch đã lưu. Vui lòng đổi tên khác.", "error")
+      return
+    }
     if (!form.targetAmount || parseFloat(form.targetAmount) <= 0) {
       showToast("Vui lòng nhập số tiền cần đạt.", "error")
       return
@@ -139,6 +163,10 @@ export function PlanningPage() {
   }
 
   const handleSavePlan = async (selectedResult) => {
+    if (isDuplicateName) {
+      showToast("Tên kế hoạch đã trùng với kế hoạch đã lưu. Vui lòng đổi tên khác.", "error")
+      return
+    }
     if (!form.targetAmount || parseFloat(form.targetAmount) <= 0) {
       showToast("Vui lòng nhập số tiền cần đạt trước khi lưu kế hoạch.", "error")
       return
@@ -188,7 +216,7 @@ export function PlanningPage() {
         <div className="planning-page__main">
           <GoalTypeSection activeGoal={activeGoal} onGoalChange={handleGoalChange} />
 
-          <PlanFormSection form={form} onFormChange={setForm} />
+          <PlanFormSection form={form} onFormChange={setForm} isDuplicate={isDuplicateName} />
 
           <CapitalSection form={form} onFormChange={setForm} />
 

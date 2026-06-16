@@ -1,4 +1,4 @@
-export function PlanFormSection({ form, onFormChange }) {
+export function PlanFormSection({ form, onFormChange, isDuplicate }) {
   const updateField = (field, value) => {
     onFormChange({ ...form, [field]: value })
   }
@@ -21,11 +21,16 @@ export function PlanFormSection({ form, onFormChange }) {
         <div className="plan-form__field">
           <label className="plan-form__label">Tên mục tiêu</label>
           <input
-            className="plan-form__input"
+            className={`plan-form__input ${isDuplicate ? 'plan-form__input--warning' : ''}`}
             placeholder="Nhập tên mục tiêu"
             value={form.planName}
             onChange={(e) => updateField("planName", e.target.value)}
           />
+          {isDuplicate && (
+            <span className="plan-form__warning-text">
+              ⚠️ Tên kế hoạch đã trùng với một kế hoạch đã lưu. Vui lòng đổi tên khác.
+            </span>
+          )}
         </div>
 
         {/* Số tiền cần đạt */}
