@@ -7,6 +7,84 @@ const SIMULATED_LATENCY = 100; // ms (có thể đặt = 0 khi production)
 const BASE_URL = import.meta.env.VITE_API_URL || "";
 //Định nghĩa biến môi trường VITE_API_URL để gọi endpoint sản phẩm trên Render thay vì fix cứng local proxy.
 
+class UnauthorizedError extends Error {
+  constructor(message = "Unauthorized") {
+    super(message);
+    this.name = "UnauthorizedError";
+  }
+}
+
+let isRefreshing = false;
+let refreshSubscribers = [];
+
+function subscribeTokenRefresh(cb) {
+  refreshSubscribers.push(cb);
+}
+
+function onRefreshed(token) {
+  refreshSubscribers.forEach((cb) => cb(token));
+  refreshSubscribers = [];
+}
+
+function forceLogout() {
+  localStorage.removeItem("datn_token");
+  localStorage.removeItem("datn_refresh_token");
+  localStorage.removeItem("datn_current_user");
+  window.location.reload();
+}
+
+async function performRequest(requestFn) {
+  try {
+    return await requestFn();
+  } catch (err) {
+    if (err instanceof UnauthorizedError) {
+      const refreshToken = localStorage.getItem("datn_refresh_token");
+      if (!refreshToken) {
+        forceLogout();
+        throw err;
+      }
+
+      if (!isRefreshing) {
+        isRefreshing = true;
+        console.log("[API CLIENT] Access token expired. Attempting refresh...");
+        
+        fetch(`${BASE_URL}/api/v1/auth/refresh`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ refresh_token: refreshToken }),
+        })
+          .then(async (res) => {
+            if (!res.ok) {
+              throw new Error("Failed to refresh token");
+            }
+            const refreshData = await res.json();
+            console.log("[API CLIENT] Token refresh successful.");
+            localStorage.setItem("datn_token", refreshData.access_token);
+            if (refreshData.refresh_token) {
+              localStorage.setItem("datn_refresh_token", refreshData.refresh_token);
+            }
+            isRefreshing = false;
+            onRefreshed(refreshData.access_token);
+          })
+          .catch((refreshErr) => {
+            console.error("[API CLIENT] Token refresh failed:", refreshErr);
+            isRefreshing = false;
+            forceLogout();
+          });
+      }
+
+      return new Promise((resolve, reject) => {
+        subscribeTokenRefresh(() => {
+          requestFn().then(resolve).catch(reject);
+        });
+      });
+    }
+    throw err;
+  }
+}
+
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -14,12 +92,7 @@ function delay(ms) {
 async function checkResponse(response, isLogin = false) {
   if (!response.ok) {
     if (response.status === 401 && !isLogin) {
-      const token = localStorage.getItem("datn_token");
-      if (token) {
-        localStorage.removeItem("datn_token");
-        localStorage.removeItem("datn_current_user");
-        window.location.reload();
-      }
+      throw new UnauthorizedError();
     }
     let errorMsg = "Network response was not ok";
     try {
@@ -73,7 +146,22 @@ async function checkResponse(response, isLogin = false) {
 }
 
 export const apiClient = {
+  // Public wrapped methods that handle auto-refresh
   async get(url, options = {}) {
+    return performRequest(() => this._get(url, options));
+  },
+  async post(url, body, options = {}) {
+    return performRequest(() => this._post(url, body, options));
+  },
+  async put(url, body, options = {}) {
+    return performRequest(() => this._put(url, body, options));
+  },
+  async delete(url, options = {}) {
+    return performRequest(() => this._delete(url, options));
+  },
+
+  // Internal raw methods
+  async _get(url, options = {}) {
     console.log(`[API CLIENT] GET request to: ${url}`, options);
     await delay(SIMULATED_LATENCY);
 
@@ -120,7 +208,7 @@ export const apiClient = {
     return { data };
   },
 
-  async post(url, body, options = {}) {
+  async _post(url, body, options = {}) {
     console.log(`[API CLIENT] POST request to: ${url}`, body, options);
     await delay(SIMULATED_LATENCY);
 
@@ -155,6 +243,7 @@ export const apiClient = {
       const resData = await response.json();
 
       localStorage.setItem("datn_token", resData.access_token);
+      localStorage.setItem("datn_refresh_token", resData.refresh_token);
       const user = {
         id: 1,
         username: body.username,
@@ -198,7 +287,7 @@ export const apiClient = {
     return { data };
   },
 
-  async put(url, body, options = {}) {
+  async _put(url, body, options = {}) {
     console.log(`[API CLIENT] PUT request to: ${url}`, body, options);
     await delay(SIMULATED_LATENCY);
 
@@ -221,7 +310,7 @@ export const apiClient = {
     return { data };
   },
 
-  async delete(url, options = {}) {
+  async _delete(url, options = {}) {
     console.log(`[API CLIENT] DELETE request to: ${url}`, options);
     await delay(SIMULATED_LATENCY);
 

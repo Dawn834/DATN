@@ -17,6 +17,7 @@ export function Sidebar() {
 
   const handleLogout = () => {
     localStorage.removeItem("datn_token")
+    localStorage.removeItem("datn_refresh_token")
     localStorage.removeItem("datn_current_user")
     navigate("/login")
   }
