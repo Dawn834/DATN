@@ -9,10 +9,12 @@ import { SignupPage } from "./pages/Signup/SignupPage"
 import { ForgotPasswordPage } from "./pages/ForgotPassword/ForgotPasswordPage"
 import { SettingsPage } from "./pages/Settings/SettingsPage"
 import { ProtectedRoute } from "./components/common/ProtectedRoute"
+import { ToastProvider } from "./context/ToastContext"
 
 function App() {
   return (
-    <BrowserRouter>
+    <ToastProvider>
+      <BrowserRouter>
       <Routes>
         {/* Public Routes without Sidebar/Header Layout */}
         <Route path="/login" element={<LoginPage />} />
@@ -34,6 +36,7 @@ function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </ToastProvider>
   )
 }
 

@@ -6,10 +6,12 @@ import { PlanListSection } from "./sections/PlanListSection"
 import { AssetChartSection } from "./sections/AssetChartSection"
 import { savingPlanService } from "@/services/savingPlanService"
 import { formatCurrency } from "@/utils/formatters"
+import { useToast } from "@/context/ToastContext"
 import "./ManagementPage.scss"
 
 export function ManagementPage() {
   const navigate = useNavigate()
+  const { showToast } = useToast()
   const [plans, setPlans] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -33,10 +35,10 @@ export function ManagementPage() {
     if (!window.confirm("Bạn có chắc chắn muốn xóa kế hoạch tiết kiệm này?")) return
     try {
       await savingPlanService.deletePlan(id)
-      alert("Đã xóa kế hoạch thành công!")
+      showToast("Đã xóa kế hoạch thành công!", "success")
       loadPlans() // Tải lại danh sách
     } catch (err) {
-      alert("Lỗi khi xóa kế hoạch: " + err.message)
+      showToast("Lỗi khi xóa kế hoạch: " + err.message, "error")
     }
   }
 

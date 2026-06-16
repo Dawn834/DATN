@@ -10,10 +10,12 @@ import { BankSelectionSection } from "./sections/BankSelectionSection"
 import { PlanResultsSection } from "./sections/PlanResultsSection"
 import { bankService } from "@/services/bankService"
 import { savingPlanService } from "@/services/savingPlanService"
+import { useToast } from "@/context/ToastContext"
 import "./PlanningPage.scss"
 
 export function PlanningPage() {
   const navigate = useNavigate()
+  const { showToast } = useToast()
   const [activeGoal, setActiveGoal] = useState("car")
   const [showResults, setShowResults] = useState(false)
   const [selectedBanks, setSelectedBanks] = useState(["MB", "VIB", "VCB"])
@@ -126,7 +128,7 @@ export function PlanningPage() {
       setShowResults(true)
     } catch (err) {
       console.error("Calculation error:", err)
-      alert("Lỗi khi lập kế hoạch: " + (err.message || err))
+      showToast("Lỗi khi lập kế hoạch: " + (err.message || err), "error")
     } finally {
       setLoading(false)
     }
@@ -158,10 +160,10 @@ export function PlanningPage() {
       }
 
       await savingPlanService.createPlan(newPlan)
-      alert("Đã lưu kế hoạch tiết kiệm thành công!")
+      showToast("Đã lưu kế hoạch tiết kiệm thành công!", "success")
       navigate("/management")
     } catch (err) {
-      alert("Không thể lưu kế hoạch: " + err.message)
+      showToast("Không thể lưu kế hoạch: " + err.message, "error")
     }
   }
 
