@@ -19,6 +19,7 @@ export function SettingsPage() {
   // OTP flow states
   const [showOtpModal, setShowOtpModal] = useState(false)
   const [otpCode, setOtpCode] = useState("")
+  const [otpError, setOtpError] = useState("")
 
   useEffect(() => {
     async function fetchProfile() {
@@ -65,6 +66,7 @@ export function SettingsPage() {
 
       // Show OTP modal
       setShowOtpModal(true)
+      setOtpError("")
       setSuccess(`Mã xác thực OTP đã được gửi đến email của bạn. Vui lòng nhập mã để hoàn tất đổi mật khẩu.`)
     } catch (err) {
       console.error("Request change password error:", err)
@@ -77,12 +79,12 @@ export function SettingsPage() {
   const handleVerifyOtp = async (e) => {
     e.preventDefault()
     if (!otpCode || otpCode.length !== 6) {
-      setError("Mã OTP phải gồm 6 chữ số.")
+      setOtpError("Mã OTP phải gồm 6 chữ số.")
       return
     }
 
     setIsLoading(true)
-    setError("")
+    setOtpError("")
 
     try {
       // API call to POST /auth/change-password/verify
@@ -98,7 +100,7 @@ export function SettingsPage() {
       setShowOtpModal(false)
     } catch (err) {
       console.error("Verify OTP error:", err)
-      setError(err?.message || "Mã xác thực OTP không hợp lệ hoặc đã hết hạn.")
+      setOtpError(err?.message || "Mã xác thực OTP không hợp lệ hoặc đã hết hạn.")
     } finally {
       setIsLoading(false)
     }
@@ -240,6 +242,12 @@ export function SettingsPage() {
               <p>Mã xác thực OTP đã được gửi đến email <strong>{user?.email}</strong>. Vui lòng nhập mã OTP để xác nhận đổi mật khẩu.</p>
             </div>
             <form onSubmit={handleVerifyOtp} className="settings-page__modal-form">
+              {otpError && (
+                <div className="settings-page__modal-error">
+                  <AlertCircle size={16} />
+                  <span>{otpError}</span>
+                </div>
+              )}
               <input
                 type="text"
                 maxLength={6}
@@ -258,6 +266,7 @@ export function SettingsPage() {
                     setShowOtpModal(false)
                     setSuccess("")
                     setError("")
+                    setOtpError("")
                   }}
                   className="settings-page__modal-btn settings-page__modal-btn--cancel"
                   disabled={isLoading}
