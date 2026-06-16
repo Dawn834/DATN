@@ -47,6 +47,10 @@ export function PlanningPage() {
   }
 
   const handleCalculate = async () => {
+    if (!form.targetAmount || parseFloat(form.targetAmount) <= 0) {
+      showToast("Vui lòng nhập số tiền cần đạt.", "error")
+      return
+    }
     setLoading(true)
     try {
       const initDep = parseFloat(form.initialDeposit) || 0
@@ -135,6 +139,10 @@ export function PlanningPage() {
   }
 
   const handleSavePlan = async (selectedResult) => {
+    if (!form.targetAmount || parseFloat(form.targetAmount) <= 0) {
+      showToast("Vui lòng nhập số tiền cần đạt trước khi lưu kế hoạch.", "error")
+      return
+    }
     try {
       const now = new Date()
       const startDateStr = `${String(now.getDate()).padStart(2, "0")}/${String(now.getMonth() + 1).padStart(2, "0")}/${now.getFullYear()}`
