@@ -1,9 +1,24 @@
+import { useState, useEffect } from "react"
 import { formatCurrency } from "@/utils/formatters"
 import { useNavigate } from "react-router-dom"
 import { GOAL_TYPES } from "@/constants/planningConstants"
 
 export function PlanListSection({ plans, onDeletePlan }) {
   const navigate = useNavigate()
+  const [currentPage, setCurrentPage] = useState(1)
+  const plansPerPage = 5
+
+  const totalPages = Math.ceil((plans?.length || 0) / plansPerPage)
+
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages)
+    }
+  }, [plans?.length, totalPages, currentPage])
+
+  const indexOfLastPlan = currentPage * plansPerPage
+  const indexOfFirstPlan = indexOfLastPlan - plansPerPage
+  const currentPlans = (plans || []).slice(indexOfFirstPlan, indexOfLastPlan)
 
   return (
     <section className="plan-list">
@@ -16,7 +31,7 @@ export function PlanListSection({ plans, onDeletePlan }) {
             Chưa có kế hoạch tiết kiệm nào. Hãy tạo kế hoạch đầu tiên của bạn!
           </div>
         ) : (
-          plans.map((plan) => {
+          currentPlans.map((plan) => {
             const goalInfo = GOAL_TYPES.find(g => g.id === plan.goalType) || { icon: "💰" }
             return (
               <div key={plan.id} className="plan-list__card">
@@ -84,9 +99,31 @@ export function PlanListSection({ plans, onDeletePlan }) {
                 </div>
               </div>
             )
-          })
+        })
         )}
       </div>
+
+      {totalPages > 1 && (
+        <div className="plan-list__pagination">
+          <button
+            className="plan-list__pagination-btn"
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            Trước
+          </button>
+          <span className="plan-list__pagination-info">
+            Trang {currentPage} / {totalPages}
+          </span>
+          <button
+            className="plan-list__pagination-btn"
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >
+            Sau
+          </button>
+        </div>
+      )}
     </section>
   )
 }

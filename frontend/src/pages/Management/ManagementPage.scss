@@ -349,6 +349,45 @@
       }
     }
   }
+
+  &__pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px dashed $border-color;
+  }
+
+  &__pagination-btn {
+    padding: 8px 16px;
+    border: 1px solid $border-color;
+    background: $bg-card;
+    color: $text-secondary;
+    border-radius: $radius-md;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+
+    &:hover:not(:disabled) {
+      border-color: $primary-blue;
+      color: $primary-blue;
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+
+  &__pagination-info {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-secondary;
+  }
 }
 
 // ---- Asset Chart ----
