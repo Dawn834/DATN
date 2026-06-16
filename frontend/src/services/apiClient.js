@@ -128,6 +128,12 @@ async function checkResponse(response, isLogin = false) {
           errorMsg = "Yêu cầu đổi mật khẩu đã hết hạn.";
         } else if (normalized.includes("token has expired")) {
           errorMsg = "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.";
+        } else if (normalized.includes("total_amount must be greater than 0")) {
+          errorMsg = "Số tiền tích lũy phải lớn hơn 0.";
+        } else if (normalized.includes("term_month must be greater than 0")) {
+          errorMsg = "Kỳ hạn tích lũy phải lớn hơn 0.";
+        } else if (normalized.includes("saving plan not found")) {
+          errorMsg = "Không tìm thấy kế hoạch tiết kiệm.";
         }
       } else if (Array.isArray(detail)) {
         errorMsg = detail
