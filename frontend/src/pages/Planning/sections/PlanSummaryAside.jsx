@@ -1,9 +1,16 @@
 import { formatCurrency } from "@/utils/formatters"
 import { GOAL_TYPES } from "@/constants/planningConstants"
 
+const parseAmount = (val) => {
+  if (typeof val === "number") return val
+  if (!val) return 0
+  const clean = val.toString().replace(/\D/g, "")
+  return parseFloat(clean) || 0
+}
+
 export function PlanSummaryAside({ form }) {
-  const target = Number(form.targetAmount) || 0
-  const initial = Number(form.initialDeposit) || 0
+  const target = parseAmount(form.targetAmount) || 0
+  const initial = parseAmount(form.initialDeposit) || 0
   const term = form.term || 24
   const rate = 5.09
 

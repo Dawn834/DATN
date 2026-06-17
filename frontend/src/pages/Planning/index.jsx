@@ -13,6 +13,13 @@ import { savingPlanService } from "@/services/savingPlanService"
 import { useToast } from "@/context/ToastContext"
 import "./PlanningPage.scss"
 
+const parseAmount = (val) => {
+  if (typeof val === "number") return val
+  if (!val) return 0
+  const clean = val.toString().replace(/\D/g, "")
+  return parseFloat(clean) || 0
+}
+
 export function PlanningPage() {
   const navigate = useNavigate()
   const { showToast } = useToast()
@@ -71,13 +78,17 @@ export function PlanningPage() {
       showToast("Tên kế hoạch đã trùng với kế hoạch đã lưu. Vui lòng đổi tên khác.", "error")
       return
     }
-    if (!form.targetAmount || parseFloat(form.targetAmount) <= 0) {
+    if (!form.targetAmount || parseAmount(form.targetAmount) <= 0) {
       showToast("Vui lòng nhập số tiền cần đạt.", "error")
+      return
+    }
+    if (!form.initialDeposit || parseAmount(form.initialDeposit) <= 0) {
+      showToast("Vui lòng nhập số tiền vốn hiện có lớn hơn 0.", "error")
       return
     }
     setLoading(true)
     try {
-      const initDep = parseFloat(form.initialDeposit) || 0
+      const initDep = parseAmount(form.initialDeposit) || 0
       const monthDep = 0
       const termMonths = parseInt(form.term) || 12
 
@@ -87,7 +98,7 @@ export function PlanningPage() {
           name: form.planName,
           duration_month: termMonths,
           total_amount: initDep,
-          goal_amount: parseFloat(form.targetAmount) || 0,
+          goal_amount: parseAmount(form.targetAmount) || 0,
           prefer_rate: "ONLINE",
           codes: autoOptimize ? [] : selectedBanks,
           notes: form.goalLabel || "",
@@ -167,7 +178,7 @@ export function PlanningPage() {
       showToast("Tên kế hoạch đã trùng với kế hoạch đã lưu. Vui lòng đổi tên khác.", "error")
       return
     }
-    if (!form.targetAmount || parseFloat(form.targetAmount) <= 0) {
+    if (!form.targetAmount || parseAmount(form.targetAmount) <= 0) {
       showToast("Vui lòng nhập số tiền cần đạt trước khi lưu kế hoạch.", "error")
       return
     }
@@ -183,10 +194,10 @@ export function PlanningPage() {
         bankCode: selectedResult.bankCode,
         bankName: selectedResult.bankName,
         goalType: form.goalType,
-        targetAmount: parseFloat(form.targetAmount) || 0,
-        initialDeposit: parseFloat(form.initialDeposit) || 0,
+        targetAmount: parseAmount(form.targetAmount) || 0,
+        initialDeposit: parseAmount(form.initialDeposit) || 0,
         monthlyDeposit: 0,
-        currentAmount: parseFloat(form.initialDeposit) || 0,
+        currentAmount: parseAmount(form.initialDeposit) || 0,
         rate: selectedResult.rate,
         term: selectedResult.term,
         startDate: startDateStr,
@@ -243,7 +254,7 @@ export function PlanningPage() {
             visible={showResults}
             results={results}
             planName={form.planName}
-            targetAmount={parseFloat(form.targetAmount) || 0}
+            targetAmount={parseAmount(form.targetAmount) || 0}
             onSavePlan={handleSavePlan}
           />
         </div>
