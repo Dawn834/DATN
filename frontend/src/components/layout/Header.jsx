@@ -171,12 +171,21 @@ export function Header() {
           <span className="header__notification-dot" />
         </button>
 
-        <div className="header__user" onClick={() => setShowDropdown(!showDropdown)}>
+        <div
+          className="header__user"
+          onClick={() => {
+            if (!user) {
+              navigate("/login")
+            } else {
+              setShowDropdown(!showDropdown)
+            }
+          }}
+        >
           <div className="header__user-avatar">{getAvatarLetter()}</div>
           <div className="header__user-info">
             <div className="header__user-name">{getDisplayName()}</div>
           </div>
-          {showDropdown && (
+          {user && showDropdown && (
             <div className="header__user-dropdown" onClick={(e) => e.stopPropagation()}>
               <div className="header__dropdown-header">
                 <span className="header__dropdown-name">{getDisplayName()}</span>
