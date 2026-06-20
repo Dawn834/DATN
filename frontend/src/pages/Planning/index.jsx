@@ -35,6 +35,7 @@ export function PlanningPage() {
   const [autoOptimize, setAutoOptimize] = useState(false)
   const [riskLevel, setRiskLevel] = useState("medium")
   const [existingPlans, setExistingPlans] = useState([])
+  const [banks, setBanks] = useState([])
 
   useEffect(() => {
     async function fetchExistingPlans() {
@@ -47,7 +48,18 @@ export function PlanningPage() {
         console.error("Failed to load existing plans:", err)
       }
     }
+    async function fetchBanks() {
+      try {
+        const data = await bankService.getBanks()
+        if (data) {
+          setBanks(data)
+        }
+      } catch (err) {
+        console.error("Failed to load banks:", err)
+      }
+    }
     fetchExistingPlans()
+    fetchBanks()
   }, [])
 
   const [form, setForm] = useState({
@@ -92,6 +104,12 @@ export function PlanningPage() {
       showToast("Vui lòng nhập số tiền vốn hiện có lớn hơn 0.", "error")
       return
     }
+    const validSelectedBanks = selectedBanks.filter(code => banks.some(b => b.code === code))
+    if (form.rateType === "dynamic" && !autoOptimize && validSelectedBanks.length === 0) {
+      showToast("Vui lòng chọn ít nhất một ngân hàng ưu tiên.", "error")
+      return
+    }
+    let hasPlans = false
     setLoading(true)
     try {
       const initDep = parseAmount(form.initialDeposit) || 0
@@ -110,7 +128,7 @@ export function PlanningPage() {
           total_amount: initDep,
           goal_amount: parseAmount(form.targetAmount) || 0,
           prefer_rate: form.channel || "ONLINE",
-          codes: autoOptimize ? [] : selectedBanks,
+          codes: autoOptimize ? [] : validSelectedBanks,
           notes: form.goalLabel || "",
           ...(riskGroupValue != null && { risk_group: riskGroupValue }),
         }
@@ -142,6 +160,7 @@ export function PlanningPage() {
             }
           })
           setResults(formatted)
+          hasPlans = true
         } else {
           setResults([])
         }
@@ -172,11 +191,17 @@ export function PlanningPage() {
             planDetails: fixedResult.plan_details,
           }]
           setResults(formatted)
+          hasPlans = true
         } else {
           setResults([])
         }
       }
       setShowResults(true)
+      if (hasPlans) {
+        showToast("Đã tạo phương án thành công!", "success")
+      } else {
+        showToast("Không tìm thấy phương án tối ưu phù hợp.", "warning")
+      }
     } catch (err) {
       console.error("Calculation error:", err)
       showToast("Lỗi khi lập kế hoạch: " + (err.message || err), "error")
@@ -252,6 +277,7 @@ export function PlanningPage() {
               onToggleBank={handleToggleBank}
               autoOptimize={autoOptimize}
               onToggleAutoOptimize={() => setAutoOptimize((prev) => !prev)}
+              banks={banks}
             />
           )}
 
