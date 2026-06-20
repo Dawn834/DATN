@@ -378,6 +378,62 @@
       line-height: 1.5;
     }
   }
+
+  &__channel {
+    margin-top: $spacing-md;
+    padding-top: $spacing-md;
+    border-top: 1px solid $border-light;
+  }
+
+  &__channel-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-secondary;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  &__channel-toggle {
+    display: flex;
+    gap: 8px;
+    padding: 4px;
+    background: $bg-muted;
+    border-radius: $radius-md;
+  }
+
+  &__channel-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 2px solid transparent;
+    border-radius: $radius-sm;
+    background: transparent;
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-muted;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    outline: none;
+
+    &:hover:not(&--active) {
+      color: $text-secondary;
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    &--active {
+      background: $bg-card;
+      color: $primary-blue;
+      border-color: $primary-blue;
+      box-shadow: 0 2px 8px rgba($primary-blue, 0.12);
+    }
+  }
+
+  &__channel-icon {
+    font-size: 16px;
+  }
 }
 
 // ---- Bank Selection Section (Step 4) ----
@@ -833,6 +889,18 @@
       color: $text-muted;
     }
 
+    &-risk-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: $radius-full;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      width: fit-content;
+    }
+
     &-stats {
       display: flex;
       justify-content: space-between;
@@ -897,6 +965,107 @@
         }
       }
     }
+  }
+}
+
+// ---- Risk Appetite Section ----
+.risk-appetite-section {
+  background: $bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  animation: fadeSlideIn 0.3s ease;
+
+  &__grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px 20px;
+    border: 2px solid $border-color;
+    border-radius: $radius-md;
+    background: $bg-card;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.25s ease;
+    outline: none;
+    position: relative;
+
+    &:hover {
+      border-color: var(--risk-border);
+      background: var(--risk-bg);
+      transform: translateX(4px);
+    }
+
+    &--active {
+      border-color: var(--risk-color);
+      background: var(--risk-bg);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+
+      .risk-appetite-section__item-label {
+        color: var(--risk-color);
+      }
+    }
+
+    &-icon {
+      font-size: 28px;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    &-content {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
+    &-label {
+      font-size: 15px;
+      font-weight: 700;
+      color: $text-primary;
+      transition: color 0.2s;
+    }
+
+    &-desc {
+      font-size: 12px;
+      color: $text-muted;
+      line-height: 1.6;
+    }
+  }
+
+  &__check {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--risk-color);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: scaleIn 0.25s ease;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
   }
 }
 

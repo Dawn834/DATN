@@ -3,7 +3,13 @@ import { formatCurrency } from "@/utils/formatters"
 import { PlanDetailsModal } from "@/components/common/PlanDetailsModal"
 import { Banknote } from "lucide-react"
 
-export function PlanResultsSection({ visible, results, planName, targetAmount, onSavePlan }) {
+const RISK_INFO = {
+  low:    { label: "Rủi ro thấp",       icon: "🛡️", color: "#2b8a3e", bg: "rgba(43, 138, 62, 0.1)" },
+  medium: { label: "Rủi ro trung bình", icon: "⚖️", color: "#e67700", bg: "rgba(230, 119, 0, 0.1)" },
+  high:   { label: "Rủi ro cao",         icon: "🔥", color: "#e03131", bg: "rgba(224, 49, 49, 0.1)" },
+}
+
+export function PlanResultsSection({ visible, results, planName, targetAmount, onSavePlan, riskLevel }) {
   const [selectedPlan, setSelectedPlan] = useState(null)
 
   if (!visible || !results || results.length === 0) return null
@@ -12,6 +18,7 @@ export function PlanResultsSection({ visible, results, planName, targetAmount, o
   const bestOption = results[0]
   const progressPct = targetAmount > 0 ? Math.min(100, Math.round((bestOption.totalAmount / targetAmount) * 100)) : 0
   const remaining = Math.max(0, targetAmount - bestOption.totalAmount)
+  const riskInfo = RISK_INFO[riskLevel] || RISK_INFO.medium
 
   return (
     <section className="plan-results">
@@ -78,6 +85,11 @@ export function PlanResultsSection({ visible, results, planName, targetAmount, o
                 <span className="plan-results__card-rate-value">{plan.rate}%</span>
                 <span className="plan-results__card-rate-label">/năm</span>
               </div>
+            </div>
+
+            <div className="plan-results__card-risk-badge" style={{ color: riskInfo.color, background: riskInfo.bg }}>
+              <span>{riskInfo.icon}</span>
+              <span>{riskInfo.label}</span>
             </div>
 
             <div className="plan-results__card-stats">

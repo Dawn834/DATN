@@ -3,6 +3,12 @@ import { formatCurrency } from "@/utils/formatters"
 import { useNavigate } from "react-router-dom"
 import { GOAL_TYPES } from "@/constants/planningConstants"
 
+const RISK_INFO = {
+  low:    { label: "Rủi ro thấp",       icon: "🛡️", color: "#2b8a3e", bg: "rgba(43, 138, 62, 0.1)" },
+  medium: { label: "Rủi ro trung bình", icon: "⚖️", color: "#e67700", bg: "rgba(230, 119, 0, 0.1)" },
+  high:   { label: "Rủi ro cao",         icon: "🔥", color: "#e03131", bg: "rgba(224, 49, 49, 0.1)" },
+}
+
 export function PlanListSection({ plans, onDeletePlan }) {
   const navigate = useNavigate()
   const [currentPage, setCurrentPage] = useState(1)
@@ -33,6 +39,7 @@ export function PlanListSection({ plans, onDeletePlan }) {
         ) : (
           currentPlans.map((plan) => {
             const goalInfo = GOAL_TYPES.find(g => g.id === plan.goalType) || { icon: "💰" }
+            const riskInfo = plan.riskLevel ? RISK_INFO[plan.riskLevel] : null
             return (
               <div key={plan.id} className="plan-list__card">
                 <div className="plan-list__card-header">
@@ -72,6 +79,16 @@ export function PlanListSection({ plans, onDeletePlan }) {
                     </div>
                   )}
                 </div>
+
+                {riskInfo && (
+                  <div
+                    className="plan-list__card-risk"
+                    style={{ color: riskInfo.color, background: riskInfo.bg }}
+                  >
+                    <span>{riskInfo.icon}</span>
+                    <span>{riskInfo.label}</span>
+                  </div>
+                )}
 
                 {plan.estimatedInterest !== undefined && (
                   <div className="plan-list__card-total">

@@ -6,6 +6,7 @@ export function RateTypeSection({ form, onFormChange }) {
   }
 
   const rateType = form.rateType || "fixed"
+  const channel = form.channel || "ONLINE"
 
   return (
     <section className="rate-type-section">
@@ -38,10 +39,32 @@ export function RateTypeSection({ form, onFormChange }) {
           <div className="rate-type-section__item-content">
             <span className="rate-type-section__item-label">Gửi linh hoạt</span>
             <span className="rate-type-section__item-desc">
-              Tối ưu chia nhỏ và tái tục kỳ hạn thông minh (Dynamic Programming). Đề xuất lợi nhuận tối ưu nhất dựa trên lãi suất hiện tại.
+              Hệ thống sẽ tự động tìm phương án gửi tiết kiệm tối ưu nhất để đạt mục tiêu của bạn.
             </span>
           </div>
         </button>
+      </div>
+
+      <div className="rate-type-section__channel">
+        <span className="rate-type-section__channel-label">Kênh gửi tiết kiệm</span>
+        <div className="rate-type-section__channel-toggle">
+          <button
+            type="button"
+            className={`rate-type-section__channel-btn ${channel === "ONLINE" ? "rate-type-section__channel-btn--active" : ""}`}
+            onClick={() => updateField("channel", "ONLINE")}
+          >
+            <span className="rate-type-section__channel-icon">🌐</span>
+            Online
+          </button>
+          <button
+            type="button"
+            className={`rate-type-section__channel-btn ${channel === "COUNTER" ? "rate-type-section__channel-btn--active" : ""}`}
+            onClick={() => updateField("channel", "COUNTER")}
+          >
+            <span className="rate-type-section__channel-icon">🏦</span>
+            Tại quầy
+          </button>
+        </div>
       </div>
     </section>
   )

@@ -5,6 +5,7 @@ import { GoalTypeSection } from "./sections/GoalTypeSection"
 import { PlanFormSection } from "./sections/PlanFormSection"
 import { CapitalSection } from "./sections/CapitalSection"
 import { RateTypeSection } from "./sections/RateTypeSection"
+import { RiskAppetiteSection } from "./sections/RiskAppetiteSection"
 import { PlanSummaryAside } from "./sections/PlanSummaryAside"
 import { BankSelectionSection } from "./sections/BankSelectionSection"
 import { PlanResultsSection } from "./sections/PlanResultsSection"
@@ -20,6 +21,9 @@ const parseAmount = (val) => {
   return parseFloat(clean) || 0
 }
 
+// Map frontend risk level → DB ranking_risk value
+const RISK_LEVEL_MAP = { low: 1, medium: 2, high: 3 }
+
 export function PlanningPage() {
   const navigate = useNavigate()
   const { showToast } = useToast()
@@ -29,6 +33,7 @@ export function PlanningPage() {
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState([])
   const [autoOptimize, setAutoOptimize] = useState(false)
+  const [riskLevel, setRiskLevel] = useState("medium")
   const [existingPlans, setExistingPlans] = useState([])
 
   useEffect(() => {
@@ -53,6 +58,7 @@ export function PlanningPage() {
     goalType: "car",
     goalLabel: GOAL_TYPES.find((g) => g.id === "car")?.label || "",
     rateType: "fixed",
+    channel: "ONLINE",
   })
 
   const isDuplicateName = existingPlans.some(
@@ -92,6 +98,10 @@ export function PlanningPage() {
       const monthDep = 0
       const termMonths = parseInt(form.term) || 12
 
+      // Chỉ gửi risk_group khi section khẩu vị rủi ro hiển thị
+      const shouldSendRisk = form.rateType === "fixed" || (form.rateType === "dynamic" && autoOptimize)
+      const riskGroupValue = shouldSendRisk ? RISK_LEVEL_MAP[riskLevel] : undefined
+
       if (form.rateType === "dynamic") {
         // Lấy từ API tối ưu hóa động của backend
         const payload = {
@@ -99,9 +109,10 @@ export function PlanningPage() {
           duration_month: termMonths,
           total_amount: initDep,
           goal_amount: parseAmount(form.targetAmount) || 0,
-          prefer_rate: "ONLINE",
+          prefer_rate: form.channel || "ONLINE",
           codes: autoOptimize ? [] : selectedBanks,
           notes: form.goalLabel || "",
+          ...(riskGroupValue != null && { risk_group: riskGroupValue }),
         }
 
         const optimizeResult = await savingPlanService.optimizePlan(payload)
@@ -139,7 +150,8 @@ export function PlanningPage() {
         const payload = {
           total_amount: initDep,
           term_month: termMonths,
-          channel: "ONLINE",
+          channel: form.channel || "ONLINE",
+          ...(riskGroupValue != null && { risk_group: riskGroupValue }),
         }
 
         const fixedResult = await savingPlanService.planByTerm(payload)
@@ -204,6 +216,7 @@ export function PlanningPage() {
         endDate: endDateStr,
         estimatedInterest: selectedResult.interestEarned,
         planDetails: selectedResult.planDetails,
+        riskLevel: riskLevel,
       }
 
       await savingPlanService.createPlan(newPlan)
@@ -242,6 +255,14 @@ export function PlanningPage() {
             />
           )}
 
+          {(form.rateType === "fixed" || (form.rateType === "dynamic" && autoOptimize)) && (
+            <RiskAppetiteSection
+              riskLevel={riskLevel}
+              onRiskChange={setRiskLevel}
+              step={form.rateType === "fixed" ? 4 : 5}
+            />
+          )}
+
           <button className="planning-submit" onClick={handleCalculate} disabled={loading}>
             {loading ? "✨ Đang tính toán..." : "✨ Tìm gói tiết kiệm tốt nhất →"}
           </button>
@@ -256,6 +277,7 @@ export function PlanningPage() {
             planName={form.planName}
             targetAmount={parseAmount(form.targetAmount) || 0}
             onSavePlan={handleSavePlan}
+            riskLevel={riskLevel}
           />
         </div>
       </div>

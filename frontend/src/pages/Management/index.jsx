@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { StatCardsSection } from "./sections/StatCardsSection"
-import { AlertBannerSection } from "./sections/AlertBannerSection"
+// import { AlertBannerSection } from "./sections/AlertBannerSection"
 import { PlanListSection } from "./sections/PlanListSection"
 import { AssetChartSection } from "./sections/AssetChartSection"
 import { savingPlanService } from "@/services/savingPlanService"
@@ -111,7 +111,7 @@ export function ManagementPage() {
         </div>
       </div>
 
-      <AlertBannerSection />
+      {/* <AlertBannerSection /> */}
       <StatCardsSection stats={stats} />
 
       <div className="management-page__grid">

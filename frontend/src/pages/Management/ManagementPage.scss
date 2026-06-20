@@ -298,6 +298,18 @@
     color: $text-muted;
   }
 
+  &__card-risk {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: $radius-full;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    width: fit-content;
+  }
+
   &__card-total {
     display: flex;
     justify-content: space-between;
